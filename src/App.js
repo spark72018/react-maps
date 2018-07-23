@@ -3,10 +3,18 @@ import GoogleMap from './components/GoogleMap';
 
 class App extends Component {
   state = {
+    filterText: '',
     showingInfoWindow: false,
+    locations: [],
     activeMarker: {},
     selectedPlace: {}
   };
+
+  handleFilterTextChange = e => {
+    this.setState({
+      filterText: e.target.value
+    });
+  }
 
   onMarkerClick = (props, marker, e) => {
     this.setState(

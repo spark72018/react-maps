@@ -11,8 +11,6 @@ export function GoogleMap({
   activeMarker,
   selectedPlace
 }) {
-  console.log('activeMarker is', activeMarker);
-  console.log('showingInfoWindow is', showingInfoWindow);
   return (
     <Map google={google} zoom={zoom} onClick={onMapClicked}>
       <Marker onClick={onMarkerClick} name={'Current location'} />
@@ -30,6 +28,7 @@ export function GoogleMap({
       <InfoWindow marker={activeMarker} visible={showingInfoWindow} onClose={onInfoWindowClose}>
         <div>
           <h1>{selectedPlace.name}</h1>
+          <h2>Address here</h2>
         </div>
       </InfoWindow>
     </Map>
