@@ -9,10 +9,10 @@ export function GoogleMap({
   onMapClicked,
   showingInfoWindow,
   onInfoWindowClose,
+  locationMarkers,
   activeMarker,
   selectedPlace
 }) {
-  
   return (
     <Map
       google={google}
@@ -20,18 +20,7 @@ export function GoogleMap({
       onClick={onMapClicked}
       initialCenter={center}
     >
-      <Marker onClick={onMarkerClick} name={'Current location'} />
-      <Marker
-        onClick={onMarkerClick}
-        title={'The marker`s title will appear as a tooltip.'}
-        name={'SOMA'}
-        position={{ lat: 37.778519, lng: -122.40564 }}
-      />
-      <Marker
-        onClick={onMarkerClick}
-        name={'Dolores park'}
-        position={{ lat: 37.759703, lng: -122.428093 }}
-      />
+      {locationMarkers}
       <InfoWindow
         marker={activeMarker}
         visible={showingInfoWindow}

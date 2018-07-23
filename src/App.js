@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import GoogleMap from './components/GoogleMap';
+import { Marker } from 'google-maps-react';
 
 const FOURSQUARE = {
   CLIENT_ID: '0JDWRCHL4O23OVWIBI0W3TUME1JIGNJL4QZDCWW252FK2ICS',
@@ -15,7 +16,7 @@ class App extends Component {
   state = {
     filterText: '',
     showingInfoWindow: false,
-    locations: [],
+    locationMarkers: [],
     activeMarker: {},
     selectedPlace: {}
   };
@@ -39,11 +40,48 @@ class App extends Component {
       queryString +
       versioningString;
 
-      console.log(foursquareUrl);
+    /*
+      Marker needs following props:
+      - name
+      - position
+      - title (tooltip text)
+      - onClick
+    */
     fetch(foursquareUrl)
       .then(res => res.json())
-      .then(res => console.log(res));
+      .then(res => {
+        console.log('foursquare res is');
+        console.table(res);
+        if (res.meta.code !== 200) {
+          return console.log('res.meta.code status was not 200', res);
+        }
+
+        // 'venues' is an array
+        const {
+          response: { venues }
+        } = res;
+        console.log('venues is', venues);
+        const arrayOfMarkers = venues.map(this.makeMarker);
+        this.setState({
+          locationMarkers: arrayOfMarkers
+        });
+      })
+      .catch(e => console.log('error', e));
   }
+
+  makeMarker = (resObj, idx) => {
+    const { name, location } = resObj;
+    const { lat, lng, address, formattedAddress } = location;
+    return (
+      <Marker
+        onClick={this.onMarkerClick}
+        key={`location${idx}`}
+        name={name + ' ' + address}
+        position={{ lat, lng }}
+        title={formattedAddress.join(', ')}
+      />
+    );
+  };
 
   handleFilterTextChange = e => {
     this.setState({
@@ -75,11 +113,17 @@ class App extends Component {
   };
 
   render() {
-    const { showingInfoWindow, activeMarker, selectedPlace } = this.state;
+    const {
+      showingInfoWindow,
+      activeMarker,
+      selectedPlace,
+      locationMarkers
+    } = this.state;
     return (
       <div>
         <h1>Hello World</h1>
         <GoogleMap
+          locationMarkers={locationMarkers}
           showingInfoWindow={showingInfoWindow}
           activeMarker={activeMarker}
           selectedPlace={selectedPlace}
