@@ -10,9 +10,9 @@ export function GoogleMap({
   showingInfoWindow,
   onInfoWindowClose,
   locationMarkers,
-  activeMarker,
-  selectedPlace
+  activeMarker
 }) {
+  const { name, address } = activeMarker;
   return (
     <Map
       google={google}
@@ -27,8 +27,8 @@ export function GoogleMap({
         onClose={onInfoWindowClose}
       >
         <div>
-          <h1>{selectedPlace.name}</h1>
-          <h2>Address here</h2>
+          <h1>{name}</h1>
+          <h2>{address}</h2>
         </div>
       </InfoWindow>
     </Map>

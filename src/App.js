@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import GoogleMap from './components/GoogleMap';
+import Sidebar from './components/Sidebar';
 import { Marker } from 'google-maps-react';
 
 const FOURSQUARE = {
@@ -7,7 +8,7 @@ const FOURSQUARE = {
   CLIENT_SECRET: 'HQ0OM52QC3D0Y0D2Y4RG4CG2UL34KVFO15ODVGTBA4KH1QA2'
 };
 
-const defaultCenter = {
+const DEFAULT_CENTER = {
   lat: 40.758896,
   lng: -73.98513
 };
@@ -17,13 +18,12 @@ class App extends Component {
     filterText: '',
     showingInfoWindow: false,
     locationMarkers: [],
-    activeMarker: {},
-    selectedPlace: {}
+    activeMarker: {}
   };
 
   componentDidMount() {
     const { CLIENT_ID, CLIENT_SECRET } = FOURSQUARE;
-    const { lat, lng } = defaultCenter;
+    const { lat, lng } = DEFAULT_CENTER;
 
     const firstPartOfApiUrl = 'https://api.foursquare.com/v2/venues/search?';
     const clientIdString = 'client_id=' + CLIENT_ID;
@@ -47,6 +47,8 @@ class App extends Component {
       - title (tooltip text)
       - onClick
     */
+    const makeMarkerWithHandler = makeMarker(this.onMarkerClick);
+
     fetch(foursquareUrl)
       .then(res => res.json())
       .then(res => {
@@ -61,27 +63,30 @@ class App extends Component {
           response: { venues }
         } = res;
         console.log('venues is', venues);
-        const arrayOfMarkers = venues.map(this.makeMarker);
+        const arrayOfMarkers = venues.map(makeMarkerWithHandler);
         this.setState({
           locationMarkers: arrayOfMarkers
-        });
+        }, () => console.log(this.state.locationMarkers[0]));
       })
       .catch(e => console.log('error', e));
-  }
 
-  makeMarker = (resObj, idx) => {
-    const { name, location } = resObj;
-    const { lat, lng, address, formattedAddress } = location;
-    return (
-      <Marker
-        onClick={this.onMarkerClick}
-        key={`location${idx}`}
-        name={name + ' ' + address}
-        position={{ lat, lng }}
-        title={formattedAddress.join(', ')}
-      />
-    );
-  };
+    function makeMarker(clickHandler) {
+      return function(resObj, idx) {
+        const { name, location } = resObj;
+        const { lat, lng, address, formattedAddress } = location;
+        return (
+          <Marker
+            onClick={clickHandler}
+            key={`location${idx}`}
+            name={name}
+            address={address}
+            position={{ lat, lng }}
+            title={formattedAddress.join(', ')}
+          />
+        );
+      };
+    }
+  }
 
   handleFilterTextChange = e => {
     this.setState({
@@ -92,11 +97,10 @@ class App extends Component {
   onMarkerClick = (props, marker, e) => {
     this.setState(
       {
-        selectedPlace: props,
         activeMarker: marker,
         showingInfoWindow: true
       },
-      () => console.log('new state is', this.state)
+      () => console.log('post onMarkerClick', this.state)
     );
   };
 
@@ -117,11 +121,16 @@ class App extends Component {
       showingInfoWindow,
       activeMarker,
       selectedPlace,
-      locationMarkers
+      locationMarkers,
+      filterText
     } = this.state;
     return (
       <div>
         <h1>Hello World</h1>
+        <Sidebar 
+          handleFilterTextChange={this.handleFilterTextChange}
+          textValue={filterText}
+        />
         <GoogleMap
           locationMarkers={locationMarkers}
           showingInfoWindow={showingInfoWindow}
@@ -129,7 +138,7 @@ class App extends Component {
           selectedPlace={selectedPlace}
           onMarkerClick={this.onMarkerClick}
           onMapClicked={this.onMapClicked}
-          center={defaultCenter}
+          center={DEFAULT_CENTER}
           zoom={13}
         />
       </div>
