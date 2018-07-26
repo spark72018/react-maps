@@ -5,22 +5,20 @@ export function GoogleMap({
   google,
   zoom,
   center,
+  style,
   onMarkerClick,
   onMapClicked,
   showingInfoWindow,
   onInfoWindowClose,
   locationMarkers,
-  activeMarker
+  activeMarker,
+  manualInfoWindowInfo
 }) {
   const { name, address } = activeMarker;
-  return (
-    <Map
-      google={google}
-      zoom={zoom}
-      onClick={onMapClicked}
-      initialCenter={center}
-    >
-      {locationMarkers}
+  let infoWindow;
+
+  if (name) {
+    infoWindow = (
       <InfoWindow
         marker={activeMarker}
         visible={showingInfoWindow}
@@ -31,6 +29,34 @@ export function GoogleMap({
           <h2>{address}</h2>
         </div>
       </InfoWindow>
+    );
+  } else if (manualInfoWindowInfo) {
+    console.log('manualInfoWindowInfo is', manualInfoWindowInfo);
+    infoWindow = (
+      <InfoWindow
+        position={manualInfoWindowInfo.position}
+        visible={showingInfoWindow}
+        onClose={onInfoWindowClose}
+      >
+        <div>
+          <h1>{manualInfoWindowInfo.name}</h1>
+          <h2>{manualInfoWindowInfo.address}</h2>
+        </div>
+      </InfoWindow>
+    );
+  }
+  console.log('infoWindow is', infoWindow);
+  return (
+    <Map
+      google={google}
+      zoom={zoom}
+      onClick={onMapClicked}
+      initialCenter={center}
+      style={style}
+      className={'map-container'}
+    >
+      {locationMarkers.map(({ marker }) => marker)}
+      {infoWindow}
     </Map>
   );
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import GoogleMap from './components/GoogleMap';
 import Sidebar from './components/Sidebar';
 import { Marker } from 'google-maps-react';
+import './App.css';
 
 const FOURSQUARE = {
   CLIENT_ID: '0JDWRCHL4O23OVWIBI0W3TUME1JIGNJL4QZDCWW252FK2ICS',
@@ -13,12 +14,18 @@ const DEFAULT_CENTER = {
   lng: -73.98513
 };
 
+const STYLE = {
+  width: '500px',
+  height: '600px'
+};
+
 class App extends Component {
   state = {
     filterText: '',
     showingInfoWindow: false,
     locationMarkers: [],
-    activeMarker: {}
+    activeMarker: {},
+    manualInfoWindowInfo: null
   };
 
   componentDidMount() {
@@ -31,6 +38,7 @@ class App extends Component {
     const coordinateString = '&ll=' + lat + ',' + lng;
     const queryString = '&query=coffee';
     const versioningString = '&v=20180723';
+    const limitString = '&limit=5';
 
     const foursquareUrl =
       firstPartOfApiUrl +
@@ -38,22 +46,16 @@ class App extends Component {
       clientSecretString +
       coordinateString +
       queryString +
-      versioningString;
+      versioningString +
+      limitString;
 
-    /*
-      Marker needs following props:
-      - name
-      - position
-      - title (tooltip text)
-      - onClick
-    */
     const makeMarkerWithHandler = makeMarker(this.onMarkerClick);
 
     fetch(foursquareUrl)
       .then(res => res.json())
       .then(res => {
-        console.log('foursquare res is');
-        console.table(res);
+        // console.log('foursquare res is');
+        // console.table(res);
         if (res.meta.code !== 200) {
           return console.log('res.meta.code status was not 200', res);
         }
@@ -62,11 +64,10 @@ class App extends Component {
         const {
           response: { venues }
         } = res;
-        console.log('venues is', venues);
         const arrayOfMarkers = venues.map(makeMarkerWithHandler);
         this.setState({
           locationMarkers: arrayOfMarkers
-        }, () => console.log(this.state.locationMarkers[0]));
+        });
       })
       .catch(e => console.log('error', e));
 
@@ -74,16 +75,19 @@ class App extends Component {
       return function(resObj, idx) {
         const { name, location } = resObj;
         const { lat, lng, address, formattedAddress } = location;
-        return (
-          <Marker
-            onClick={clickHandler}
-            key={`location${idx}`}
-            name={name}
-            address={address}
-            position={{ lat, lng }}
-            title={formattedAddress.join(', ')}
-          />
-        );
+        return {
+          locationNumber: idx,
+          marker: (
+            <Marker
+              onClick={clickHandler}
+              key={`location${idx}`}
+              name={name}
+              address={address}
+              position={{ lat, lng }}
+              title={formattedAddress.join(', ')}
+            />
+          )
+        };
       };
     }
   }
@@ -95,24 +99,58 @@ class App extends Component {
   };
 
   onMarkerClick = (props, marker, e) => {
-    this.setState(
+    console.log('onMarkerClick marker is', marker);
+    this.setState({
+      activeMarker: marker,
+      showingInfoWindow: true
+    });
+  };
+
+  handleListItemClick = e => {
+    const { target } = e;
+    const notListItem = !target.classList.contains('list-item');
+    if (notListItem) return;
+
+    const tagWithDatasetAttr = target.parentNode;
+    const {
+      dataset: { locationNumber }
+    } = tagWithDatasetAttr;
+    const parsedLocationNum = parseInt(locationNumber, 10);
+    const { locationMarkers } = this.state;
+    const chosenMarker = findLocationMarker(parsedLocationNum, locationMarkers);
+    const { position, name, address } = chosenMarker.props;
+    return this.setState(
       {
-        activeMarker: marker,
+        manualInfoWindowInfo: {
+          position,
+          name,
+          address
+        },
+        activeMarker: {},
         showingInfoWindow: true
       },
-      () => console.log('post onMarkerClick', this.state)
+      () => console.log('manualInfoWindowInfo set', this.state)
     );
+
+    // finds marker with matching 'locationNumber' value
+    function findLocationMarker(datasetNum, arrayOfMarkers) {
+      const arrayLength = arrayOfMarkers.length;
+      for (let i = 0; i < arrayLength; i++) {
+        const { locationNumber } = arrayOfMarkers[i];
+        if (datasetNum === locationNumber) {
+          return arrayOfMarkers[i].marker;
+        }
+      }
+      return null;
+    }
   };
 
   onMapClicked = props => {
     if (this.state.showingInfoWindow) {
-      this.setState(
-        {
-          showingInfoWindow: false,
-          activeMarker: null
-        },
-        () => console.log('new state is', this.state)
-      );
+      this.setState({
+        showingInfoWindow: false,
+        activeMarker: {}
+      });
     }
   };
 
@@ -120,28 +158,32 @@ class App extends Component {
     const {
       showingInfoWindow,
       activeMarker,
+      manualInfoWindowInfo,
       selectedPlace,
       locationMarkers,
       filterText
     } = this.state;
     return (
-      <div>
-        <h1>Hello World</h1>
-        <Sidebar 
+      <React.Fragment>
+        <Sidebar
           handleFilterTextChange={this.handleFilterTextChange}
+          handleListItemClick={this.handleListItemClick}
+          markersArray={locationMarkers}
           textValue={filterText}
         />
         <GoogleMap
           locationMarkers={locationMarkers}
           showingInfoWindow={showingInfoWindow}
           activeMarker={activeMarker}
+          manualInfoWindowInfo={manualInfoWindowInfo}
           selectedPlace={selectedPlace}
           onMarkerClick={this.onMarkerClick}
           onMapClicked={this.onMapClicked}
           center={DEFAULT_CENTER}
           zoom={13}
+          style={STYLE}
         />
-      </div>
+      </React.Fragment>
     );
   }
 }

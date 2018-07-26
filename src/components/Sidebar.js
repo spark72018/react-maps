@@ -2,14 +2,22 @@ import React from 'react';
 import FilterSearchInput from './FilterSearchInput';
 import ListView from './ListView';
 
-export default function Sidebar({ textValue, handleFilterTextChange }) {
+export default function Sidebar({
+  textValue,
+  markersArray,
+  handleFilterTextChange,
+  handleListItemClick
+}) {
   return (
     <div className="sidebar">
       <FilterSearchInput
         textValue={textValue}
         handleFilterTextChange={handleFilterTextChange}
       />
-      <ListView />
+      <ListView
+        markersArray={markersArray}
+        handleListItemClick={handleListItemClick}
+      />
     </div>
   );
 }
