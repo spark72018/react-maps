@@ -10,7 +10,7 @@ class App extends Component {
     filterText: '',
     showingInfoWindow: false,
     locationMarkers: [],
-    locationFilterNames: [],
+    filterMarkers: [],
     activeMarker: {},
     manualInfoWindowInfo: {}
   };
@@ -80,13 +80,29 @@ class App extends Component {
   }
 
   handleFilterTextChange = e => {
-    this.setState({
-      filterText: e.target.value
+    const filterText = e.target.value;
+    const { locationMarkers } = this.state;
+    const filterLocation = this.locationFilter(filterText);
+
+    const filterMarkers = filterText
+      ? locationMarkers.filter(filterLocation)
+      : [...this.state.filterMarkers];
+
+    return this.setState({
+      filterText,
+      filterMarkers
     });
   };
 
+  locationFilter = filterText => locationObj => {
+    return (
+      locationObj.marker.props.name
+        .toLowerCase()
+        .indexOf(filterText.toLowerCase()) !== -1
+    );
+  };
+
   onMarkerClick = (props, marker, e) => {
-    console.log('onMarkerClick marker is', marker);
     this.setState({
       activeMarker: marker,
       showingInfoWindow: true
@@ -142,18 +158,19 @@ class App extends Component {
 
   render() {
     const {
-      showingInfoWindow,
-      activeMarker,
-      manualInfoWindowInfo,
-      locationMarkers,
-      filterText
+      showingInfoWindow, // Boolean
+      activeMarker, // Object
+      manualInfoWindowInfo, // Object
+      locationMarkers, // Array
+      filterMarkers, // Array
+      filterText // String
     } = this.state;
     return (
       <React.Fragment>
         <Sidebar
           handleFilterTextChange={this.handleFilterTextChange}
           handleListItemClick={this.handleListItemClick}
-          markersArray={locationMarkers}
+          markersArray={!filterText ? locationMarkers : filterMarkers}
           textValue={filterText}
         />
         <GoogleMap
