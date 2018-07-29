@@ -1,23 +1,9 @@
 import React, { Component } from 'react';
 import GoogleMap from './components/GoogleMap';
 import Sidebar from './components/Sidebar';
+import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
 import { Marker } from 'google-maps-react';
 import './App.css';
-
-const FOURSQUARE = {
-  CLIENT_ID: '0JDWRCHL4O23OVWIBI0W3TUME1JIGNJL4QZDCWW252FK2ICS',
-  CLIENT_SECRET: 'HQ0OM52QC3D0Y0D2Y4RG4CG2UL34KVFO15ODVGTBA4KH1QA2'
-};
-
-const DEFAULT_CENTER = {
-  lat: 40.758896,
-  lng: -73.98513
-};
-
-const STYLE = {
-  width: '500px',
-  height: '600px'
-};
 
 class App extends Component {
   state = {
@@ -25,7 +11,7 @@ class App extends Component {
     showingInfoWindow: false,
     locationMarkers: [],
     activeMarker: {},
-    manualInfoWindowInfo: null
+    manualInfoWindowInfo: {}
   };
 
   componentDidMount() {
@@ -119,6 +105,8 @@ class App extends Component {
     const { locationMarkers } = this.state;
     const chosenMarker = findLocationMarker(parsedLocationNum, locationMarkers);
     const { position, name, address } = chosenMarker.props;
+    console.log('chosenMarker.props are', position, name, address);
+
     return this.setState(
       {
         manualInfoWindowInfo: {
@@ -135,9 +123,11 @@ class App extends Component {
     // finds marker with matching 'locationNumber' value
     function findLocationMarker(datasetNum, arrayOfMarkers) {
       const arrayLength = arrayOfMarkers.length;
+
       for (let i = 0; i < arrayLength; i++) {
         const { locationNumber } = arrayOfMarkers[i];
         if (datasetNum === locationNumber) {
+          console.log('found a marker', arrayOfMarkers[i].marker);
           return arrayOfMarkers[i].marker;
         }
       }
@@ -147,10 +137,13 @@ class App extends Component {
 
   onMapClicked = props => {
     if (this.state.showingInfoWindow) {
-      this.setState({
-        showingInfoWindow: false,
-        activeMarker: {}
-      });
+      this.setState(
+        {
+          showingInfoWindow: false,
+          activeMarker: {}
+        },
+        () => console.log('onMapClicked triggered', this.state)
+      );
     }
   };
 
@@ -159,7 +152,6 @@ class App extends Component {
       showingInfoWindow,
       activeMarker,
       manualInfoWindowInfo,
-      selectedPlace,
       locationMarkers,
       filterText
     } = this.state;
@@ -176,12 +168,11 @@ class App extends Component {
           showingInfoWindow={showingInfoWindow}
           activeMarker={activeMarker}
           manualInfoWindowInfo={manualInfoWindowInfo}
-          selectedPlace={selectedPlace}
           onMarkerClick={this.onMarkerClick}
           onMapClicked={this.onMapClicked}
           center={DEFAULT_CENTER}
           zoom={13}
-          style={STYLE}
+          style={MAP_STYLE}
         />
       </React.Fragment>
     );
