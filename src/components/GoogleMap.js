@@ -35,20 +35,20 @@ export function GoogleMap({
       </InfoWindow>
     );
   } else if (manualInfoWindowInfo) {
+    const { position, name, address } = manualInfoWindowInfo;
     infoWindow = (
       <InfoWindow
-        position={manualInfoWindowInfo.position}
+        position={position}
         visible={showingInfoWindow}
         onClose={onInfoWindowClose}
       >
         <div>
-          <h1>{manualInfoWindowInfo.name}</h1>
-          <h2>{manualInfoWindowInfo.address}</h2>
+          <h1>{name}</h1>
+          <h2>{address}</h2>
         </div>
       </InfoWindow>
     );
   }
-  console.log('infoWindow is', infoWindow);
   return (
     <Map
       google={google}

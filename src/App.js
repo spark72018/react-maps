@@ -10,6 +10,7 @@ class App extends Component {
     filterText: '',
     showingInfoWindow: false,
     locationMarkers: [],
+    locationFilterNames: [],
     activeMarker: {},
     manualInfoWindowInfo: {}
   };
