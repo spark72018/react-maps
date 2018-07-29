@@ -105,20 +105,16 @@ class App extends Component {
     const { locationMarkers } = this.state;
     const chosenMarker = findLocationMarker(parsedLocationNum, locationMarkers);
     const { position, name, address } = chosenMarker.props;
-    console.log('chosenMarker.props are', position, name, address);
 
-    return this.setState(
-      {
-        manualInfoWindowInfo: {
-          position,
-          name,
-          address
-        },
-        activeMarker: {},
-        showingInfoWindow: true
+    return this.setState({
+      manualInfoWindowInfo: {
+        position,
+        name,
+        address
       },
-      () => console.log('manualInfoWindowInfo set', this.state)
-    );
+      activeMarker: {},
+      showingInfoWindow: true
+    });
 
     // finds marker with matching 'locationNumber' value
     function findLocationMarker(datasetNum, arrayOfMarkers) {
@@ -127,7 +123,6 @@ class App extends Component {
       for (let i = 0; i < arrayLength; i++) {
         const { locationNumber } = arrayOfMarkers[i];
         if (datasetNum === locationNumber) {
-          console.log('found a marker', arrayOfMarkers[i].marker);
           return arrayOfMarkers[i].marker;
         }
       }
@@ -137,13 +132,10 @@ class App extends Component {
 
   onMapClicked = props => {
     if (this.state.showingInfoWindow) {
-      this.setState(
-        {
-          showingInfoWindow: false,
-          activeMarker: {}
-        },
-        () => console.log('onMapClicked triggered', this.state)
-      );
+      this.setState({
+        showingInfoWindow: false,
+        activeMarker: {}
+      });
     }
   };
 
