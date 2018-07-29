@@ -174,7 +174,9 @@ class App extends Component {
           textValue={filterText}
         />
         <GoogleMap
-          locationMarkers={locationMarkers}
+          locationMarkers={
+            filterMarkers.length > 0 ? filterMarkers : locationMarkers
+          }
           showingInfoWindow={showingInfoWindow}
           activeMarker={activeMarker}
           manualInfoWindowInfo={manualInfoWindowInfo}
