@@ -3,23 +3,15 @@ import GoogleMap from './components/GoogleMap';
 import Sidebar from './components/Sidebar';
 import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
 import { Marker } from 'google-maps-react';
+import isEmpty from './utilityFns';
 import './App.css';
-
-// function from https://coderwall.com/p/_g3x9q/how-to-check-if-javascript-object-is-empty
-function isEmpty(obj) {
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) return false;
-  }
-  return true;
-}
 
 /*
   - MAKE EVERYTHING RESPONSIVE
-  - ANIMATE MARKERS WHEN CLICKED
+  - SERVICE WORKER
   - IMPLEMENT PROPER ERROR HANDLING
   - PROVIDE PROPER ATTRIBUTION TO FOURSQUARE ON APP AND README
   - ARIA STUFF
-  - SERVICE WORKER
 */
 
 class App extends Component {

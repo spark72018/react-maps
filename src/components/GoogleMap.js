@@ -15,13 +15,9 @@ export function GoogleMap({
   manualInfoWindowInfo
 }) {
   const { name, address } = activeMarker;
-  // console.log('GoogleMaps activeMarker', activeMarker);
-  // console.log('GoogleMaps manualInfoWindow', manualInfoWindowInfo);
-  // console.log('GoogleMaps showingInfoWindow', showingInfoWindow);
   let infoWindow;
 
   if (name) {
-    console.log('there is activeMarker name');
     infoWindow = (
       <InfoWindow
         marker={activeMarker}
