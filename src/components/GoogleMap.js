@@ -49,6 +49,10 @@ export function GoogleMap({
       </InfoWindow>
     );
   }
+
+  function getMarker({ marker }) {
+    return marker;
+  }
   return (
     <Map
       google={google}
@@ -58,7 +62,7 @@ export function GoogleMap({
       style={style}
       className={'map-container'}
     >
-      {locationMarkers.map(({ marker }) => marker)}
+      {locationMarkers.map(getMarker)}
       {infoWindow}
     </Map>
   );

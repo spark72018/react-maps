@@ -5,6 +5,23 @@ import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
 import { Marker } from 'google-maps-react';
 import './App.css';
 
+// function from https://coderwall.com/p/_g3x9q/how-to-check-if-javascript-object-is-empty
+function isEmpty(obj) {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) return false;
+  }
+  return true;
+}
+
+/*
+  - MAKE EVERYTHING RESPONSIVE
+  - ANIMATE MARKERS WHEN CLICKED
+  - IMPLEMENT PROPER ERROR HANDLING
+  - PROVIDE PROPER ATTRIBUTION TO FOURSQUARE ON APP AND README
+  - ARIA STUFF
+  - SERVICE WORKER
+*/
+
 class App extends Component {
   state = {
     filterText: '',
@@ -56,7 +73,7 @@ class App extends Component {
           locationMarkers: arrayOfMarkers
         });
       })
-      .catch(e => console.log('error', e));
+      .catch(e => console.log('fetch error', e));
 
     function makeMarker(clickHandler) {
       return function(resObj, idx) {
@@ -103,10 +120,23 @@ class App extends Component {
   };
 
   onMarkerClick = (props, marker, e) => {
-    this.setState({
-      activeMarker: marker,
-      showingInfoWindow: true
-    });
+    const { activeMarker } = this.state;
+    const previousActiveMarker = !isEmpty(activeMarker);
+    const selectedMarker = marker;
+
+    if (previousActiveMarker) {
+      activeMarker.setAnimation(null);
+    }
+
+    selectedMarker.setAnimation(props.google.maps.Animation.BOUNCE);
+
+    return this.setState(
+      {
+        activeMarker: selectedMarker,
+        showingInfoWindow: true
+      },
+      () => console.log(this.state.activeMarker)
+    );
   };
 
   handleListItemClick = e => {
@@ -148,8 +178,12 @@ class App extends Component {
   };
 
   onMapClicked = props => {
+    const {activeMarker} = this.state;
+    if(!isEmpty(activeMarker)) {
+      activeMarker.setAnimation(null);
+    }
     if (this.state.showingInfoWindow) {
-      this.setState({
+      return this.setState({
         showingInfoWindow: false,
         activeMarker: {}
       });
@@ -165,18 +199,17 @@ class App extends Component {
       filterMarkers, // Array
       filterText // String
     } = this.state;
+    const markersToShow = !filterText ? locationMarkers : filterMarkers;
     return (
       <React.Fragment>
         <Sidebar
           handleFilterTextChange={this.handleFilterTextChange}
           handleListItemClick={this.handleListItemClick}
-          markersArray={!filterText ? locationMarkers : filterMarkers}
+          markersArray={markersToShow}
           textValue={filterText}
         />
         <GoogleMap
-          locationMarkers={
-            filterMarkers.length > 0 ? filterMarkers : locationMarkers
-          }
+          locationMarkers={markersToShow}
           showingInfoWindow={showingInfoWindow}
           activeMarker={activeMarker}
           manualInfoWindowInfo={manualInfoWindowInfo}
