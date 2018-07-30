@@ -170,18 +170,30 @@ class App extends Component {
   };
 
   onMapClicked = props => {
-    const {activeMarker} = this.state;
-    if(!isEmpty(activeMarker)) {
-      activeMarker.setAnimation(null);
-    }
-    if (this.state.showingInfoWindow) {
-      return this.setState({
-        showingInfoWindow: false,
-        activeMarker: {}
-      });
-    }
+    const { activeMarker, showingInfoWindow } = this.state;
+
+    return (
+      !isEmpty(activeMarker) && this.stopAnimation(activeMarker),
+      showingInfoWindow && this.closeInfoWindow()
+    );
   };
 
+  onInfoWindowClose = () => {
+    const { activeMarker } = this.state;
+
+    return !isEmpty(activeMarker) && this.stopAnimation(activeMarker);
+  };
+
+  closeInfoWindow() {
+    return this.setState({
+      showingInfoWindow: false,
+      activeMarker: {}
+    });
+  }
+
+  stopAnimation(marker) {
+    return marker.setAnimation(null);
+  }
   render() {
     const {
       showingInfoWindow, // Boolean
@@ -207,6 +219,7 @@ class App extends Component {
           manualInfoWindowInfo={manualInfoWindowInfo}
           onMarkerClick={this.onMarkerClick}
           onMapClicked={this.onMapClicked}
+          onInfoWindowClose={this.onInfoWindowClose}
           center={DEFAULT_CENTER}
           zoom={13}
           style={MAP_STYLE}
