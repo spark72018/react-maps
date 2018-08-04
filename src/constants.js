@@ -9,6 +9,7 @@ export const DEFAULT_CENTER = {
 };
 
 export const MAP_STYLE = {
-  width: '500px',
-  height: '600px'
+  width: '100%',
+  height: '100%',
+  position: 'relative'
 };

@@ -5,11 +5,12 @@ import ListView from './ListView';
 export default function Sidebar({
   filterText,
   markersArray,
+  open,
   handleFilterTextChange,
   handleListItemClick
 }) {
   return (
-    <div className="sidebar">
+    <div className={open ? 'sidebar open' : 'sidebar'}>
       <TextFilter value={filterText} onFilter={handleFilterTextChange} />
 
       <ListView

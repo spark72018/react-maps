@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
+import { Marker } from 'google-maps-react';
 import GoogleMap from './components/GoogleMap';
 import Sidebar from './components/Sidebar';
+import HamburgerButton from './components/HamburgerButton';
 import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
-import { Marker } from 'google-maps-react';
 import isEmpty from './utilityFns';
 import './App.css';
 
 /*
   - MAKE EVERYTHING RESPONSIVE
+  - IF INFOWINDOW ALREADY OPEN, AND USER CLICKS <LI>, CLOSE INFOWINDOW AND RESET MANUALINFOWWINDOW
   - SERVICE WORKER
   - IMPLEMENT PROPER ERROR HANDLING
   - PROVIDE PROPER ATTRIBUTION TO FOURSQUARE ON APP AND README
@@ -21,7 +23,8 @@ class App extends Component {
     locationMarkers: [],
     filterMarkers: [],
     activeMarker: {},
-    manualInfoWindowInfo: {}
+    manualInfoWindowInfo: {},
+    hamburgerOpen: false
   };
 
   componentDidMount() {
@@ -50,8 +53,6 @@ class App extends Component {
     fetch(foursquareUrl)
       .then(res => res.json())
       .then(res => {
-        // console.log('foursquare res is');
-        // console.table(res);
         if (res.meta.code !== 200) {
           return console.log('res.meta.code status was not 200', res);
         }
@@ -194,23 +195,43 @@ class App extends Component {
   stopAnimation(marker) {
     return marker.setAnimation(null);
   }
+
+  handleHamburgerButtonClick = e => {
+    const { hamburgerOpen } = this.state;
+
+    this.setState(
+      {
+        hamburgerOpen: !hamburgerOpen
+      },
+      () => console.log(this.state.hamburgerOpen)
+    );
+
+    console.log('hamburger icon clicked');
+  };
   render() {
     const {
       showingInfoWindow, // Boolean
       activeMarker, // Object
       manualInfoWindowInfo, // Object
+      hamburgerOpen, // Boolean
       locationMarkers, // Array
       filterMarkers, // Array
       filterText // String
     } = this.state;
     const markersToShow = !filterText ? locationMarkers : filterMarkers;
+    
     return (
       <React.Fragment>
+        <HamburgerButton
+          open={hamburgerOpen}
+          handleHamburgerButtonClick={this.handleHamburgerButtonClick}
+        />
         <Sidebar
           handleFilterTextChange={this.handleFilterTextChange}
           handleListItemClick={this.handleListItemClick}
           markersArray={markersToShow}
           textValue={filterText}
+          open={hamburgerOpen}
         />
         <GoogleMap
           locationMarkers={markersToShow}

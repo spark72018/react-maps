@@ -16,6 +16,5 @@ export default function ListView({ markersArray, handleListItemClick }) {
         <h3 className="list-item address">{address}</h3>
       </li>
     );
-    return null;
   }
 }
