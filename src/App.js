@@ -23,7 +23,7 @@ class App extends Component {
     locationMarkers: [],
     filterMarkers: [],
     activeMarker: {},
-    manualInfoWindowInfo: {},
+    markerWindowInfo: {},
     hamburgerOpen: false
   };
 
@@ -118,24 +118,30 @@ class App extends Component {
     const selectedMarker = marker;
 
     if (previousActiveMarker) {
-      activeMarker.setAnimation(null);
+      this.stopMarkerAnimation(activeMarker);
     }
 
     selectedMarker.setAnimation(props.google.maps.Animation.BOUNCE);
 
-    return this.setState(
-      {
-        activeMarker: selectedMarker,
-        showingInfoWindow: true
-      },
-      () => console.log(this.state.activeMarker)
-    );
+    return this.setState({
+      activeMarker: selectedMarker,
+      showingInfoWindow: true
+    });
   };
 
   handleListItemClick = e => {
     const { target } = e;
     const notListItem = !target.classList.contains('list-item');
     if (notListItem) return;
+
+    const { markerWindowInfo } = this.state;
+
+    const infoWindowAlreadyOpen = !isEmpty(markerWindowInfo);
+
+    if (infoWindowAlreadyOpen) {
+      console.log('lala', infoWindowAlreadyOpen);
+      return this.closeInfoWindowAndResetWindowInfo();
+    }
 
     const tagWithDatasetAttr = target.parentNode;
     const {
@@ -147,7 +153,7 @@ class App extends Component {
     const { position, name, address } = chosenMarker.props;
 
     return this.setState({
-      manualInfoWindowInfo: {
+      markerWindowInfo: {
         position,
         name,
         address
@@ -174,7 +180,8 @@ class App extends Component {
     const { activeMarker, showingInfoWindow } = this.state;
 
     return (
-      !isEmpty(activeMarker) && this.stopAnimation(activeMarker),
+      // stop animation and close info window
+      !isEmpty(activeMarker) && this.stopMarkerAnimation(activeMarker),
       showingInfoWindow && this.closeInfoWindow()
     );
   };
@@ -182,44 +189,48 @@ class App extends Component {
   onInfoWindowClose = () => {
     const { activeMarker } = this.state;
 
-    return !isEmpty(activeMarker) && this.stopAnimation(activeMarker);
+    // if already active animating marker, stop animation when window closes
+    return !isEmpty(activeMarker) && this.stopMarkerAnimation(activeMarker);
   };
 
-  closeInfoWindow() {
-    return this.setState({
-      showingInfoWindow: false,
-      activeMarker: {}
-    });
-  }
+  closeInfoWindow = () => this.setState({ showingInfoWindow: false });
 
-  stopAnimation(marker) {
-    return marker.setAnimation(null);
-  }
+  resetActiveMarker = e => this.setState({ activeMarker: {} });
+
+  resetMarkerWindowInfo = () =>
+    this.setState({ markerWindowInfo: {} }, () =>
+      console.log(this.state.markerWindowInfo)
+    );
+
+  closeInfoWindowAndResetWindowInfo = () => (
+    this.closeInfoWindow(), this.resetMarkerWindowInfo()
+  );
+
+  closeInfoWindowAndResetActiveMarker = () => (
+    this.closeInfoWindow(), this.resetActiveMarker()
+  );
+
+  stopMarkerAnimation = marker => marker.setAnimation(null);
 
   handleHamburgerButtonClick = e => {
     const { hamburgerOpen } = this.state;
 
-    this.setState(
-      {
-        hamburgerOpen: !hamburgerOpen
-      },
-      () => console.log(this.state.hamburgerOpen)
-    );
-
-    console.log('hamburger icon clicked');
+    this.setState({
+      hamburgerOpen: !hamburgerOpen
+    });
   };
   render() {
     const {
       showingInfoWindow, // Boolean
       activeMarker, // Object
-      manualInfoWindowInfo, // Object
+      markerWindowInfo, // Object
       hamburgerOpen, // Boolean
       locationMarkers, // Array
       filterMarkers, // Array
       filterText // String
     } = this.state;
     const markersToShow = !filterText ? locationMarkers : filterMarkers;
-    
+
     return (
       <React.Fragment>
         <HamburgerButton
@@ -237,7 +248,7 @@ class App extends Component {
           locationMarkers={markersToShow}
           showingInfoWindow={showingInfoWindow}
           activeMarker={activeMarker}
-          manualInfoWindowInfo={manualInfoWindowInfo}
+          markerWindowInfo={markerWindowInfo}
           onMarkerClick={this.onMarkerClick}
           onMapClicked={this.onMapClicked}
           onInfoWindowClose={this.onInfoWindowClose}

@@ -12,7 +12,7 @@ export function GoogleMap({
   onInfoWindowClose,
   locationMarkers,
   activeMarker,
-  manualInfoWindowInfo
+  markerWindowInfo
 }) {
   const { name, address } = activeMarker;
   let infoWindow;
@@ -30,8 +30,8 @@ export function GoogleMap({
         </div>
       </InfoWindow>
     );
-  } else if (manualInfoWindowInfo) {
-    const { position, name, address } = manualInfoWindowInfo;
+  } else if (markerWindowInfo) {
+    const { position, name, address } = markerWindowInfo;
     infoWindow = (
       <InfoWindow
         position={position}
