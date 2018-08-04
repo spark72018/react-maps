@@ -151,16 +151,13 @@ class App extends Component {
     const { locationMarkers } = this.state;
     const chosenMarker = findLocationMarker(parsedLocationNum, locationMarkers);
     const { position, name, address } = chosenMarker.props;
+    const windowInfo = { position, name, address };
 
-    return this.setState({
-      markerWindowInfo: {
-        position,
-        name,
-        address
-      },
-      activeMarker: {},
-      showingInfoWindow: true
-    });
+    return (
+      this.setMarkerWindowInfo(windowInfo),
+      this.resetActiveMarker(),
+      this.showInfoWindow()
+    );
 
     // finds marker with matching 'locationNumber' value
     function findLocationMarker(datasetNum, arrayOfMarkers) {
@@ -195,12 +192,16 @@ class App extends Component {
 
   closeInfoWindow = () => this.setState({ showingInfoWindow: false });
 
+  showInfoWindow = () => this.setState({ showingInfoWindow: true });
+
   resetActiveMarker = e => this.setState({ activeMarker: {} });
 
-  resetMarkerWindowInfo = () =>
-    this.setState({ markerWindowInfo: {} }, () =>
-      console.log(this.state.markerWindowInfo)
-    );
+  resetMarkerWindowInfo = () => this.setMarkerWindowInfo({});
+
+  setMarkerWindowInfo = infoObj =>
+    this.setState({
+      markerWindowInfo: infoObj
+    });
 
   closeInfoWindowAndResetWindowInfo = () => (
     this.closeInfoWindow(), this.resetMarkerWindowInfo()
@@ -212,13 +213,11 @@ class App extends Component {
 
   stopMarkerAnimation = marker => marker.setAnimation(null);
 
-  handleHamburgerButtonClick = e => {
-    const { hamburgerOpen } = this.state;
+  toggleHamburgerOpen = () =>
+    this.setState({ hamburgerOpen: !this.state.hamburgerOpen });
 
-    this.setState({
-      hamburgerOpen: !hamburgerOpen
-    });
-  };
+  handleHamburgerButtonClick = e => this.toggleHamburgerOpen();
+
   render() {
     const {
       showingInfoWindow, // Boolean
