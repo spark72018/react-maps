@@ -3,15 +3,15 @@ import { Marker } from 'google-maps-react';
 import GoogleMap from './components/GoogleMap';
 import Sidebar from './components/Sidebar';
 import HamburgerButton from './components/HamburgerButton';
+import Attribution from './components/Attribution';
 import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
 import isEmpty from './utilityFns';
 import './App.css';
 
 /*
+  - COMMENT ALL NECESSARY PARTS OF CODE
   - MAKE EVERYTHING RESPONSIVE
-  - IMPLEMENT PROPER ERROR HANDLING
   - PROVIDE PROPER ATTRIBUTION TO FOURSQUARE ON APP AND README
-  - ARIA STUFF
 */
 
 class App extends Component {
@@ -23,8 +23,7 @@ class App extends Component {
     activeMarker: {},
     markerWindowInfo: {},
     hamburgerOpen: false,
-    fourSquareApiError: null,
-    googleMapsApiError: null
+    fourSquareApiError: null
   };
 
   componentDidMount() {
@@ -66,7 +65,13 @@ class App extends Component {
           locationMarkers: arrayOfMarkers
         });
       })
-      .catch(e => console.log('fetch error', e));
+      .catch(e => {
+        console.log('foursqure fetch error', e);
+
+        return this.setState({
+          fourSquareApiError: e
+        });
+      });
 
     function makeMarker(clickHandler) {
       return function(resObj, idx) {
@@ -225,12 +230,17 @@ class App extends Component {
       hamburgerOpen, // Boolean
       locationMarkers, // Array
       filterMarkers, // Array
-      filterText // String
+      filterText, // String
+      fourSquareApiError
     } = this.state;
     const markersToShow = !filterText ? locationMarkers : filterMarkers;
 
-    return (
+    return fourSquareApiError ? (
+      <h1>FourSquare Error</h1>
+    ) : (
       <React.Fragment>
+
+        <Attribution text={'Venue data powered by Foursquare'}/>
         <HamburgerButton
           open={hamburgerOpen}
           handleHamburgerButtonClick={this.handleHamburgerButtonClick}

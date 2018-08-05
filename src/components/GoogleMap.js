@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from 'google-maps-react';
 
 export function GoogleMap({
@@ -15,11 +15,15 @@ export function GoogleMap({
   markerWindowInfo
 }) {
   const { name, address } = activeMarker;
+  const infoWindowStyle = {
+    backgroundColor: 'red'
+  };
   let infoWindow;
 
   if (name) {
     infoWindow = (
       <InfoWindow
+        style={infoWindowStyle}
         marker={activeMarker}
         visible={showingInfoWindow}
         onClose={onInfoWindowClose}
@@ -38,9 +42,9 @@ export function GoogleMap({
         visible={showingInfoWindow}
         onClose={onInfoWindowClose}
       >
-        <div>
-          <h1>{name}</h1>
-          <h2>{address}</h2>
+        <div className='location-text'>
+          <h2>{name}</h2>
+          <h3>{address}</h3>
         </div>
       </InfoWindow>
     );
