@@ -53,7 +53,8 @@ class App extends Component {
       .then(res => res.json())
       .then(res => {
         if (res.meta.code !== 200) {
-          return console.log('res.meta.code status was not 200', res);
+          console.log('res.meta.code status was not 200', res);
+          return this.setState({ fourSquareApiError: res });
         }
 
         // 'venues' is an array
@@ -239,8 +240,7 @@ class App extends Component {
       <h1>FourSquare Error</h1>
     ) : (
       <React.Fragment>
-
-        <Attribution text={'Venue data powered by Foursquare'}/>
+        <Attribution text={'Venue data powered by Foursquare'} />
         <HamburgerButton
           open={hamburgerOpen}
           handleHamburgerButtonClick={this.handleHamburgerButtonClick}
