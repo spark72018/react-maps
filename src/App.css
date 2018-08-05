@@ -64,6 +64,8 @@ html, body {
 
 .sidebar input {
   margin-top: 10px;
+  height: 1.5em;
+  width: 80%;
 }
 
 .sidebar+div {

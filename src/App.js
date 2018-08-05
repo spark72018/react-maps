@@ -9,8 +9,6 @@ import './App.css';
 
 /*
   - MAKE EVERYTHING RESPONSIVE
-  - IF INFOWINDOW ALREADY OPEN, AND USER CLICKS <LI>, CLOSE INFOWINDOW AND RESET MANUALINFOWWINDOW
-  - SERVICE WORKER
   - IMPLEMENT PROPER ERROR HANDLING
   - PROVIDE PROPER ATTRIBUTION TO FOURSQUARE ON APP AND README
   - ARIA STUFF
@@ -24,7 +22,9 @@ class App extends Component {
     filterMarkers: [],
     activeMarker: {},
     markerWindowInfo: {},
-    hamburgerOpen: false
+    hamburgerOpen: false,
+    fourSquareApiError: null,
+    googleMapsApiError: null
   };
 
   componentDidMount() {
@@ -139,7 +139,6 @@ class App extends Component {
     const infoWindowAlreadyOpen = !isEmpty(markerWindowInfo);
 
     if (infoWindowAlreadyOpen) {
-      console.log('lala', infoWindowAlreadyOpen);
       return this.closeInfoWindowAndResetWindowInfo();
     }
 
@@ -216,7 +215,7 @@ class App extends Component {
   toggleHamburgerOpen = () =>
     this.setState({ hamburgerOpen: !this.state.hamburgerOpen });
 
-  handleHamburgerButtonClick = e => this.toggleHamburgerOpen();
+  handleHamburgerButtonClick = () => this.toggleHamburgerOpen();
 
   render() {
     const {
