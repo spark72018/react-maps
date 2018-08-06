@@ -119,6 +119,11 @@ h3 {
   border-radius: 4px;
   margin-top: 3px;
   height: 40px;
+  transition: all .15s ease-in-out;
+}
+
+.sidebar .list-locations li:hover {
+  background-color: #ffab84;
 }
 
 .sidebar .list-locations li h2 {

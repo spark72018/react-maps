@@ -10,8 +10,6 @@ import './App.css';
 
 /*
   - COMMENT ALL NECESSARY PARTS OF CODE
-  - MAKE EVERYTHING RESPONSIVE
-  - PROVIDE PROPER ATTRIBUTION TO FOURSQUARE ON APP AND README
 */
 
 class App extends Component {
@@ -57,9 +55,8 @@ class App extends Component {
           return this.setState({ fourSquareApiError: res });
         }
 
-        // 'venues' is an array
         const {
-          response: { venues }
+          response: { venues } // Array
         } = res;
         const arrayOfMarkers = venues.map(makeMarkerWithHandler);
         this.setState({
@@ -110,6 +107,8 @@ class App extends Component {
     });
   };
 
+  // curried method that checks if user's filterText input
+  // is contained within a location's name
   locationFilter = filterText => locationObj => {
     return (
       locationObj.marker.props.name
@@ -129,10 +128,7 @@ class App extends Component {
 
     selectedMarker.setAnimation(props.google.maps.Animation.BOUNCE);
 
-    return this.setState({
-      activeMarker: selectedMarker,
-      showingInfoWindow: true
-    });
+    return this.setActiveMarker(selectedMarker), this.showInfoWindow();
   };
 
   handleListItemClick = e => {
@@ -198,6 +194,8 @@ class App extends Component {
   closeInfoWindow = () => this.setState({ showingInfoWindow: false });
 
   showInfoWindow = () => this.setState({ showingInfoWindow: true });
+
+  setActiveMarker = marker => this.setState({ activeMarker: marker });
 
   resetActiveMarker = e => this.setState({ activeMarker: {} });
 
