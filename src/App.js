@@ -126,6 +126,7 @@ class App extends Component {
       this.stopMarkerAnimation(activeMarker);
     }
 
+    // animate selected marker
     selectedMarker.setAnimation(props.google.maps.Animation.BOUNCE);
 
     return this.setActiveMarker(selectedMarker), this.showInfoWindow();
@@ -144,21 +145,28 @@ class App extends Component {
       return this.closeInfoWindowAndResetWindowInfo();
     }
 
-    const tagWithDatasetAttr = target.parentNode;
-    const {
-      dataset: { locationNumber }
-    } = tagWithDatasetAttr;
-    const parsedLocationNum = parseInt(locationNumber, 10);
-    const { locationMarkers } = this.state;
-    const chosenMarker = findLocationMarker(parsedLocationNum, locationMarkers);
-    const { position, name, address } = chosenMarker.props;
-    const windowInfo = { position, name, address };
+    try {
+      const tagWithDatasetAttr = target.parentNode;
+      const {
+        dataset: { locationNumber }
+      } = tagWithDatasetAttr;
+      const parsedLocationNum = parseInt(locationNumber, 10);
+      const { locationMarkers } = this.state;
+      const chosenMarker = findLocationMarker(
+        parsedLocationNum,
+        locationMarkers
+      );
+      const { position, name, address } = chosenMarker.props;
+      const windowInfo = { position, name, address };
 
-    return (
-      this.setMarkerWindowInfo(windowInfo),
-      this.resetActiveMarker(),
-      this.showInfoWindow()
-    );
+      return (
+        this.setMarkerWindowInfo(windowInfo),
+        this.resetActiveMarker(),
+        this.showInfoWindow()
+      );
+    } catch (e) {
+      console.log('handleListItemClick method error!', e);
+    }
 
     // finds marker with matching 'locationNumber' value
     function findLocationMarker(datasetNum, arrayOfMarkers) {
