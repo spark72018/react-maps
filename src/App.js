@@ -243,7 +243,7 @@ class App extends Component {
     const markersToShow = !filterText ? locationMarkers : filterMarkers;
 
     return fourSquareApiError ? (
-      <h1>FourSquare Error</h1>
+      <h1>FourSquare Error, apologies for any inconvenience!</h1>
     ) : (
       <React.Fragment>
         <Attribution text={'Venue data powered by Foursquare'} />
