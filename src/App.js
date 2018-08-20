@@ -103,20 +103,24 @@ class App extends Component {
 
   // clicking markers after the first marker creates bugs with animation
   onMarkerClick = (props, selectedMarker, e) => {
-    console.log('marker clicked', selectedMarker);
     const { activeMarker } = this.state;
     const previousActiveMarker = !!activeMarker;
 
     if (previousActiveMarker) {
       console.log('previousActiveMarker', activeMarker);
-      this.stopMarkerAnimation(activeMarker);
+      const sameMarker = activeMarker.address === selectedMarker.address;
+      
       this.closeInfoWindow();
       this.resetActiveMarker();
+
+      if(!sameMarker) {
+        this.stopMarkerAnimation(activeMarker);
+      }
     }
 
     return (
-      this.setActiveMarker(selectedMarker),
       this.makeMarkerBounce(selectedMarker),
+      this.setActiveMarker(selectedMarker),
       this.showInfoWindow()
     );
   };
@@ -197,16 +201,18 @@ class App extends Component {
     this.setMarkerAnimation(marker, this.props.google.maps.Animation.BOUNCE);
 
   setMarkerAnimation = (marker, val) => (
-    marker.setAnimation(val), console.log('setMarkerAnimation called')
+    marker.setAnimation(val), console.log('setMarkerAnimation called with value', val)
   );
 
-  stopMarkerAnimation = marker => marker.setAnimation(null);
+  stopMarkerAnimation = marker => (
+    marker.setAnimation(null), console.log('stopMarkerAnimation called')
+  );
 
   setFourSquareError = fourSquareError => this.setState({ fourSquareError });
 
-  setActiveMarker = activeMarker => this.setState({ activeMarker });
+  setActiveMarker = activeMarker => this.setState({ activeMarker }, () => console.log('setActiveMarker called', this.state.activeMarker));
 
-  resetActiveMarker = () => this.setActiveMarker({});
+  resetActiveMarker = () => this.setActiveMarker(null);
 
   toggleHamburgerOpen = () =>
     this.setState({ hamburgerOpen: !this.state.hamburgerOpen });
