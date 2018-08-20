@@ -1,73 +1,92 @@
-import React from 'react';
-import { Map, InfoWindow, Marker, GoogleApiWrapper } from 'google-maps-react';
+import React, { Component } from 'react';
+import { Map, Marker, InfoWindow, GoogleApiWrapper } from 'google-maps-react';
+import { isEmpty, arraysEqualByProperty } from '../utilityFns';
 
-export function GoogleMap({
-  google,
-  zoom,
-  center,
-  style,
-  onMarkerClick,
-  onMapClicked,
-  showingInfoWindow,
-  onInfoWindowClose,
-  locationMarkers,
-  activeMarker,
-  markerWindowInfo
-}) {
-  const { name, address } = activeMarker;
-  const infoWindowStyle = {
-    backgroundColor: 'red'
-  };
-  let infoWindow;
-
-  if (name) {
-    infoWindow = (
-      <InfoWindow
-        style={infoWindowStyle}
-        marker={activeMarker}
-        visible={showingInfoWindow}
-        onClose={onInfoWindowClose}
-      >
-        <div>
-          <h1>{name}</h1>
-          <h2>{address}</h2>
-        </div>
-      </InfoWindow>
-    );
-  } else if (markerWindowInfo) {
-    const { position, name, address } = markerWindowInfo;
-    infoWindow = (
-      <InfoWindow
-        position={position}
-        visible={showingInfoWindow}
-        onClose={onInfoWindowClose}
-      >
-        <div className='location-text'>
-          <h2>{name}</h2>
-          <h3>{address}</h3>
-        </div>
-      </InfoWindow>
-    );
+class GoogleMap extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      markersArr: [],
+      markerRefsArr: []
+    };
   }
 
-  function getMarker({ marker }) {
-    return marker;
+  sameVenueNames(arr1, arr2) {
+    return arraysEqualByProperty('name', arr1, arr2);
   }
-  return (
-    <Map
-      google={google}
-      zoom={zoom}
-      onClick={onMapClicked}
-      initialCenter={center}
-      style={style}
-      className={'map-container'}
-    >
-      {locationMarkers.map(getMarker)}
-      {infoWindow}
-    </Map>
-  );
+
+  async componentDidUpdate(prevProps) {
+    const currentMarkers = this.props.markerInfoArr;
+    const previousMarkers = prevProps.markerInfoArr;
+    const arrayLengthsDifferent =
+      currentMarkers.length > previousMarkers.length;
+    const venueNamesDifferent = !this.sameVenueNames(
+      currentMarkers,
+      previousMarkers
+    );
+    if (arrayLengthsDifferent || venueNamesDifferent) {
+      console.log('componentDidUpdate');
+      /*
+      - create an array of refs for each marker element in currentMarkers
+      - used 'await' because sometimes the next setState on line 48
+        would finish before the setState on line 41 would finish
+      */
+      await this.setState({
+        markerRefsArr: currentMarkers.map(obj => React.createRef())
+      });
+
+      const { markerRefsArr } = this.state;
+
+      // create <Marker/> elements with refs
+      return this.setState({
+        markersArr: currentMarkers.map(({ markerInfo }, idx) => (
+          <Marker
+            key={`marker${idx}`}
+            ref={markerRefsArr[idx]}
+            onClick={this.props.onMarkerClick}
+            {...markerInfo}
+          />
+        ))
+      });
+    }
+  }
+
+  render() {
+    const { markersArr } = this.state;
+    const {
+      google,
+      zoom,
+      onMapClicked,
+      center,
+      style,
+      activeMarker,
+      showingInfoWindow,
+      onInfoWindowClose
+    } = this.props;
+
+    return (
+      <Map
+        google={google}
+        zoom={zoom}
+        onClick={onMapClicked}
+        initialCenter={center}
+        style={style}
+        className={'map-container'}
+      >
+        {markersArr}
+        <InfoWindow
+          marker={activeMarker}
+          visible={showingInfoWindow}
+          onClose={onInfoWindowClose}
+        >
+          <div>
+            <h2>{activeMarker && activeMarker.name}</h2>
+            <h3>{activeMarker && activeMarker.address}</h3>
+          </div>
+        </InfoWindow>
+      </Map>
+    );
+  }
 }
 
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyBAxbjkY2XIFNOn1V6hVxUuKpsZoX9i28E'
-})(GoogleMap);
+export default GoogleMap;

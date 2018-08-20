@@ -1,17 +1,18 @@
 import React from 'react';
 
-export default function ListView({ markersArray, handleListItemClick }) {
+export default function ListView({ markersToShow, handleListItemClick }) {
+  
   return (
     <ul className="list-locations" onClick={handleListItemClick}>
-      {markersArray ? markersArray.map(makeClickableItems) : null}
+      {markersToShow ? markersToShow.map(makeClickableItems) : null}
     </ul>
   );
-  
-  function makeClickableItems({ locationNumber, marker }, idx) {
-    const { name, address } = marker.props;
+
+  function makeClickableItems({ markerInfo }, idx) {
+    const { name, address } = markerInfo;
 
     return (
-      <li data-location-number={locationNumber} key={`listItem${idx}`}>
+      <li data-location-number={idx} key={`listItem${idx}`}>
         <h2 className="list-item name">{name}</h2>
         <h3 className="list-item address">{address}</h3>
       </li>

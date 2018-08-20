@@ -4,7 +4,7 @@ import ListView from './ListView';
 
 export default function Sidebar({
   filterText,
-  markersArray,
+  markersToShow,
   open,
   handleFilterTextChange,
   handleListItemClick
@@ -14,7 +14,7 @@ export default function Sidebar({
       <TextFilter value={filterText} onFilter={handleFilterTextChange} />
 
       <ListView
-        markersArray={markersArray}
+        markersToShow={markersToShow}
         handleListItemClick={handleListItemClick}
       />
     </div>

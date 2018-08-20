@@ -134,11 +134,11 @@ h3 {
   font-weight: 200;
 }
 
-@media screen and (min-width: 760px) {
+/* @media screen and (min-width: 760px) {
   #root {
     position: relative;
     margin: 0 auto;
     width: 760px;
     height: 600px;
   }
-}
+} */
