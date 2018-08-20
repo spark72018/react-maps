@@ -3,14 +3,15 @@ import { Map, Marker, InfoWindow, GoogleApiWrapper } from 'google-maps-react';
 import { isEmpty, arraysEqualByProperty } from '../utilityFns';
 
 class GoogleMap extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       markersArr: [],
       markerRefsArr: []
     };
   }
 
+  // returns Boolean
   sameVenueNames(arr1, arr2) {
     return arraysEqualByProperty('name', arr1, arr2);
   }

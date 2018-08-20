@@ -109,6 +109,7 @@ class App extends Component {
     return name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1;
   };
 
+  // clicking markers after the first marker creates bugs with animation
   onMarkerClick = (props, selectedMarker, e) => {
     console.log('marker clicked', selectedMarker);
     const { activeMarker } = this.state;
@@ -123,10 +124,7 @@ class App extends Component {
 
     return (
       this.setActiveMarker(selectedMarker),
-      this.setMarkerAnimation(
-        selectedMarker,
-        this.props.google.maps.Animation.BOUNCE // 'google' is passed as props from GoogleApiWrapper
-      ),
+      this.makeMarkerBounce(selectedMarker),
       this.showInfoWindow()
     );
   };
@@ -167,10 +165,7 @@ class App extends Component {
 
       return (
         this.setActiveMarker(chosenMarker),
-        this.setMarkerAnimation(
-          chosenMarker,
-          this.props.google.maps.Animation.BOUNCE
-        ),
+        this.makeMarkerBounce(chosenMarker),
         this.showInfoWindow()
       );
     } catch (e) {
@@ -206,6 +201,8 @@ class App extends Component {
   showInfoWindow = () => this.setState({ showingInfoWindow: true });
 
   setMarkerInfoArr = markerInfoArr => this.setState({ markerInfoArr });
+
+  makeMarkerBounce = marker => this.setMarkerAnimation(marker, this.props.google.maps.Animation.BOUNCE);
 
   setMarkerAnimation = (marker, val) => (
     marker.setAnimation(val), console.log('setMarkerAnimation called')
