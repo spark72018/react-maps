@@ -128,7 +128,7 @@ class App extends Component {
     const notListItem = !target.classList.contains('list-item');
     if (notListItem) return;
 
-    const { activeMarker } = this.state;
+    const { activeMarker, showingInfoWindow } = this.state;
     const infoWindowAlreadyOpen = !isEmpty(activeMarker);
 
     if (infoWindowAlreadyOpen) {
