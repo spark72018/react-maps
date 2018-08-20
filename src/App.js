@@ -10,24 +10,21 @@ import './App.css';
 
 /*
   - COMMENT ALL NECESSARY PARTS OF CODE
+  - SEE IF CHANGING ACTIVEMARKER TO NULL DEFAULT VALUE BREAKS APP
 */
 
 class App extends Component {
   state = {
     filterText: '',
     showingInfoWindow: false,
-    activeMarker: {},
+    // activeMarker: {},
+    activeMarker: null,
     markerInfoArr: [],
     filterMarkers: [],
     hamburgerOpen: false,
     fourSquareError: null,
-    googleMapsRef: React.createRef()
+    googleMapsRef: React.createRef() // ref to <GoogleMap/> component
   };
-
-  setMarkerRefsArr = markerRefsArr =>
-    this.setState({ markerRefsArr }, () =>
-      console.log(this.state.markerRefsArr)
-    );
 
   componentDidMount() {
     const { CLIENT_ID, CLIENT_SECRET } = FOURSQUARE;
@@ -55,7 +52,7 @@ class App extends Component {
       .then(res => {
         if (res.meta.code !== 200) {
           console.log('res.meta.code status was not 200', res);
-          return this.setState({ fourSquareError: res });
+          return this.setFourSquareError(res);
         }
 
         const {
@@ -65,11 +62,8 @@ class App extends Component {
         return this.setMarkerInfoArr(venues.map(makeMarker));
       })
       .catch(e => {
-        console.log('foursqure fetch error', e);
-
-        return this.setState({
-          fourSquareError: e
-        });
+        console.log('foursquare fetch error', e);
+        return this.setFourSquareError(e);
       });
 
     function makeMarker(resObj, locationNumber) {
@@ -202,7 +196,8 @@ class App extends Component {
 
   setMarkerInfoArr = markerInfoArr => this.setState({ markerInfoArr });
 
-  makeMarkerBounce = marker => this.setMarkerAnimation(marker, this.props.google.maps.Animation.BOUNCE);
+  makeMarkerBounce = marker =>
+    this.setMarkerAnimation(marker, this.props.google.maps.Animation.BOUNCE);
 
   setMarkerAnimation = (marker, val) => (
     marker.setAnimation(val), console.log('setMarkerAnimation called')
