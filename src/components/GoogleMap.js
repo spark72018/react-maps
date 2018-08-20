@@ -20,7 +20,7 @@ class GoogleMap extends Component {
     const currentMarkers = this.props.markerInfoArr;
     const previousMarkers = prevProps.markerInfoArr;
     const arrayLengthsDifferent =
-      currentMarkers.length > previousMarkers.length;
+      currentMarkers.length !== previousMarkers.length;
     const venueNamesDifferent = !this.sameVenueNames(
       currentMarkers,
       previousMarkers
