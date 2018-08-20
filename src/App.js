@@ -5,7 +5,6 @@ import Sidebar from './components/Sidebar';
 import HamburgerButton from './components/HamburgerButton';
 import Attribution from './components/Attribution';
 import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
-import { isEmpty } from './utilityFns';
 import './App.css';
 
 /*
@@ -17,7 +16,6 @@ class App extends Component {
   state = {
     filterText: '',
     showingInfoWindow: false,
-    // activeMarker: {},
     activeMarker: null,
     markerInfoArr: [],
     filterMarkers: [],
@@ -177,7 +175,7 @@ class App extends Component {
 
     return (
       // stop animation and close info window
-      !isEmpty(activeMarker) && this.stopMarkerAnimation(activeMarker),
+      activeMarker && this.stopMarkerAnimation(activeMarker),
       showingInfoWindow && this.closeInfoWindow()
     );
   };
@@ -186,7 +184,7 @@ class App extends Component {
     const { activeMarker } = this.state;
 
     // if already active animating marker, stop animation when window closes
-    return !isEmpty(activeMarker) && this.stopMarkerAnimation(activeMarker);
+    return activeMarker && this.stopMarkerAnimation(activeMarker);
   };
 
   closeInfoWindow = () => this.setState({ showingInfoWindow: false });
