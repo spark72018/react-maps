@@ -107,7 +107,7 @@ class App extends Component {
   onMarkerClick = (props, selectedMarker, e) => {
     console.log('marker clicked', selectedMarker);
     const { activeMarker } = this.state;
-    const previousActiveMarker = !isEmpty(activeMarker);
+    const previousActiveMarker = !!activeMarker;
 
     if (previousActiveMarker) {
       console.log('previousActiveMarker', activeMarker);
