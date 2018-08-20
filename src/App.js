@@ -129,9 +129,8 @@ class App extends Component {
     if (notListItem) return;
 
     const { activeMarker, showingInfoWindow } = this.state;
-    const infoWindowAlreadyOpen = !isEmpty(activeMarker);
 
-    if (infoWindowAlreadyOpen) {
+    if (showingInfoWindow) {
       return (
         this.stopMarkerAnimation(activeMarker),
         this.closeInfoWindow(),
