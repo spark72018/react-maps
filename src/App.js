@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import { GoogleApiWrapper } from 'google-maps-react';
-import ErrorBoundary from './components/ErrorBoundary';
 import GoogleMap from './components/GoogleMap';
 import Sidebar from './components/Sidebar';
 import HamburgerButton from './components/HamburgerButton';
 import Attribution from './components/Attribution';
 import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
+import { fourSquareApiCall, makeMarker } from './utilityFns';
 import './App.css';
 
 /*
   - COMMENT ALL NECESSARY PARTS OF CODE
   - SEE IF CHANGING ACTIVEMARKER TO NULL DEFAULT VALUE BREAKS APP
+  - FIX TAB FOCUS
+  - GOOGLE MAPS ERROR HANDLING
+  - STYLE BETTER
+  - 
 */
 
 class App extends Component {
@@ -22,33 +26,11 @@ class App extends Component {
     filterMarkers: [],
     hamburgerOpen: false,
     fourSquareError: null,
-    googleError: null,
     googleMapsRef: React.createRef() // ref to <GoogleMap/> component
   };
 
   componentDidMount() {
-    const { CLIENT_ID, CLIENT_SECRET } = FOURSQUARE;
-    const { lat, lng } = DEFAULT_CENTER;
-
-    const firstPartOfApiUrl = 'https://api.foursquare.com/v2/venues/search?';
-    const clientIdString = 'client_id=' + CLIENT_ID;
-    const clientSecretString = '&client_secret=' + CLIENT_SECRET;
-    const coordinateString = '&ll=' + lat + ',' + lng;
-    const queryString = '&query=coffee';
-    const versioningString = '&v=20180723';
-    const limitString = '&limit=7';
-
-    const foursquareUrl =
-      firstPartOfApiUrl +
-      clientIdString +
-      clientSecretString +
-      coordinateString +
-      queryString +
-      versioningString +
-      limitString;
-
-    fetch(foursquareUrl)
-      .then(res => res.json())
+    fourSquareApiCall(FOURSQUARE, DEFAULT_CENTER)
       .then(res => {
         if (res.meta.code !== 200) {
           console.log('res.meta.code status was not 200', res);
@@ -65,28 +47,6 @@ class App extends Component {
         console.log('foursquare fetch error', e);
         return this.setFourSquareError(e);
       });
-
-    function makeMarker(resObj, locationNumber) {
-      const { name, location } = resObj;
-      const { lat, lng, address, formattedAddress } = location;
-      const position = { lat, lng };
-      const markerInfo = {
-        key: `location${locationNumber}`,
-        name,
-        address,
-        position,
-        title: formattedAddress.join(', ')
-      };
-
-      return { locationNumber, markerInfo };
-    }
-  }
-
-  componentDidCatch(error, info) {
-    console.log('componentDidCatch');
-    console.log(error);
-    console.log(info);
-    return this.setGoogleError(error);
   }
 
   handleFilterTextChange = e => {
@@ -230,18 +190,14 @@ class App extends Component {
       activeMarker, // Object
       hamburgerOpen, // Boolean
       markerInfoArr,
-      markerRefsArr,
       filterMarkers, // Array
       filterText, // String
-      fourSquareError,
-      googleError
+      fourSquareError
     } = this.state;
     const markersToShow = !filterText ? markerInfoArr : filterMarkers;
 
     return fourSquareError ? (
       <h1>FourSquare Error, apologies for any inconvenience!</h1>
-    ) : googleError ? (
-      <h1>Google Error, apologies for the inconvenience!</h1>
     ) : (
       <React.Fragment>
         <Attribution text={'Venue data powered by Foursquare'} />
@@ -256,29 +212,30 @@ class App extends Component {
           textValue={filterText}
           open={hamburgerOpen}
         />
-        <ErrorBoundary>
-          <GoogleMap
-            ref={this.state.googleMapsRef}
-            google={this.props.google}
-            activeMarker={activeMarker}
-            markerInfoArr={markersToShow}
-            showingInfoWindow={showingInfoWindow}
-            setActiveMarker={this.setActiveMarker}
-            stopMarkerAnimation={this.stopMarkerAnimation}
-            showInfoWindow={this.showInfoWindow}
-            onMapClicked={this.onMapClicked}
-            onMarkerClick={this.onMarkerClick}
-            onInfoWindowClose={this.onInfoWindowClose}
-            center={DEFAULT_CENTER}
-            zoom={13}
-            style={MAP_STYLE}
-          />
-        </ErrorBoundary>
+        <GoogleMap
+          ref={this.state.googleMapsRef}
+          google={this.props.google}
+          activeMarker={activeMarker}
+          markerInfoArr={markersToShow}
+          showingInfoWindow={showingInfoWindow}
+          setMapLoaded={this.setMapLoaded}
+          onMapClicked={this.onMapClicked}
+          onMarkerClick={this.onMarkerClick}
+          onInfoWindowClose={this.onInfoWindowClose}
+          center={DEFAULT_CENTER}
+          zoom={13}
+          style={MAP_STYLE}
+        />
       </React.Fragment>
     );
   }
 }
 
+// export default GoogleApiWrapper({
+//   apiKey: 'AIzaSyBAxbjkY2XIFNOn1V6hVxUuKpsZoX9iE'
+// })(App);
+
+// right
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyBAxbjkY2XIFNOn1V6hVxUuKpsZoX9i28E'
 })(App);
