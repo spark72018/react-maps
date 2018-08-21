@@ -256,22 +256,24 @@ class App extends Component {
           textValue={filterText}
           open={hamburgerOpen}
         />
-        <GoogleMap
-          ref={this.state.googleMapsRef}
-          google={this.props.google}
-          activeMarker={activeMarker}
-          markerInfoArr={markersToShow}
-          showingInfoWindow={showingInfoWindow}
-          setActiveMarker={this.setActiveMarker}
-          stopMarkerAnimation={this.stopMarkerAnimation}
-          showInfoWindow={this.showInfoWindow}
-          onMapClicked={this.onMapClicked}
-          onMarkerClick={this.onMarkerClick}
-          onInfoWindowClose={this.onInfoWindowClose}
-          center={DEFAULT_CENTER}
-          zoom={13}
-          style={MAP_STYLE}
-        />
+        <ErrorBoundary>
+          <GoogleMap
+            ref={this.state.googleMapsRef}
+            google={this.props.google}
+            activeMarker={activeMarker}
+            markerInfoArr={markersToShow}
+            showingInfoWindow={showingInfoWindow}
+            setActiveMarker={this.setActiveMarker}
+            stopMarkerAnimation={this.stopMarkerAnimation}
+            showInfoWindow={this.showInfoWindow}
+            onMapClicked={this.onMapClicked}
+            onMarkerClick={this.onMarkerClick}
+            onInfoWindowClose={this.onInfoWindowClose}
+            center={DEFAULT_CENTER}
+            zoom={13}
+            style={MAP_STYLE}
+          />
+        </ErrorBoundary>
       </React.Fragment>
     );
   }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Map, Marker, InfoWindow, GoogleApiWrapper } from 'google-maps-react';
+import ErrorBoundary from './ErrorBoundary';
 import { arraysEqualByProperty } from '../utilityFns';
 
 class GoogleMap extends Component {
@@ -70,26 +71,28 @@ class GoogleMap extends Component {
     } = this.props;
 
     return (
-      <Map
-        google={google}
-        zoom={zoom}
-        onClick={onMapClicked}
-        initialCenter={center}
-        style={style}
-        className={'map-container'}
-      >
-        {markersArr}
-        <InfoWindow
-          marker={activeMarker}
-          visible={showingInfoWindow}
-          onClose={onInfoWindowClose}
+      <ErrorBoundary>
+        <Map
+          google={google}
+          zoom={zoom}
+          onClick={onMapClicked}
+          initialCenter={center}
+          style={style}
+          className={'map-container'}
         >
-          <div>
-            <h2>{activeMarker && activeMarker.name}</h2>
-            <h3>{activeMarker && activeMarker.address}</h3>
-          </div>
-        </InfoWindow>
-      </Map>
+          {markersArr}
+          <InfoWindow
+            marker={activeMarker}
+            visible={showingInfoWindow}
+            onClose={onInfoWindowClose}
+          >
+            <div>
+              <h2>{activeMarker && activeMarker.name}</h2>
+              <h3>{activeMarker && activeMarker.address}</h3>
+            </div>
+          </InfoWindow>
+        </Map>
+      </ErrorBoundary>
     );
   }
 }
