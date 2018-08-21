@@ -25,11 +25,13 @@ class App extends Component {
     googleMapsRef: React.createRef() // ref to <GoogleMap/> component
   };
 
+  setGoogleError = googleError => this.setState({googleError});
+
   componentDidMount() {
-    // console.log('this.props.loaded is', this.props.loaded);
-    // if(!this.props.loaded) {
-    //   return this.setState;
-    // }
+    console.log('this.props.loaded is', this.props.loaded);
+    if(!this.props.loaded) {
+      return this.setGoogleError(true);
+    }
     const { CLIENT_ID, CLIENT_SECRET } = FOURSQUARE;
     const { lat, lng } = DEFAULT_CENTER;
 
