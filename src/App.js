@@ -21,10 +21,15 @@ class App extends Component {
     filterMarkers: [],
     hamburgerOpen: false,
     fourSquareError: null,
+    googleError: null,
     googleMapsRef: React.createRef() // ref to <GoogleMap/> component
   };
 
   componentDidMount() {
+    // console.log('this.props.loaded is', this.props.loaded);
+    // if(!this.props.loaded) {
+    //   return this.setState;
+    // }
     const { CLIENT_ID, CLIENT_SECRET } = FOURSQUARE;
     const { lat, lng } = DEFAULT_CENTER;
 
@@ -109,11 +114,11 @@ class App extends Component {
     if (previousActiveMarker) {
       console.log('previousActiveMarker', activeMarker);
       const sameMarker = activeMarker.address === selectedMarker.address;
-      
+
       this.closeInfoWindow();
       this.resetActiveMarker();
 
-      if(!sameMarker) {
+      if (!sameMarker) {
         this.stopMarkerAnimation(activeMarker);
       }
     }
@@ -200,17 +205,13 @@ class App extends Component {
   makeMarkerBounce = marker =>
     this.setMarkerAnimation(marker, this.props.google.maps.Animation.BOUNCE);
 
-  setMarkerAnimation = (marker, val) => (
-    marker.setAnimation(val), console.log('setMarkerAnimation called with value', val)
-  );
+  setMarkerAnimation = (marker, val) => marker.setAnimation(val);
 
-  stopMarkerAnimation = marker => (
-    marker.setAnimation(null), console.log('stopMarkerAnimation called')
-  );
+  stopMarkerAnimation = marker => marker.setAnimation(null);
 
   setFourSquareError = fourSquareError => this.setState({ fourSquareError });
 
-  setActiveMarker = activeMarker => this.setState({ activeMarker }, () => console.log('setActiveMarker called', this.state.activeMarker));
+  setActiveMarker = activeMarker => this.setState({ activeMarker });
 
   resetActiveMarker = () => this.setActiveMarker(null);
 
