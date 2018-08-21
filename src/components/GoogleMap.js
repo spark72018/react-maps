@@ -16,6 +16,10 @@ class GoogleMap extends Component {
     return arraysEqualByProperty('name', arr1, arr2);
   }
 
+  componentDidCatch(error, info) {
+    console.log('componentDidCatch', error, info);
+  }
+
   async componentDidUpdate(prevProps) {
     const currentMarkers = this.props.markerInfoArr;
     const previousMarkers = prevProps.markerInfoArr;

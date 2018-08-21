@@ -25,13 +25,7 @@ class App extends Component {
     googleMapsRef: React.createRef() // ref to <GoogleMap/> component
   };
 
-  setGoogleError = googleError => this.setState({googleError});
-
   componentDidMount() {
-    console.log('this.props.loaded is', this.props.loaded);
-    if(!this.props.loaded) {
-      return this.setGoogleError(true);
-    }
     const { CLIENT_ID, CLIENT_SECRET } = FOURSQUARE;
     const { lat, lng } = DEFAULT_CENTER;
 
@@ -85,6 +79,13 @@ class App extends Component {
 
       return { locationNumber, markerInfo };
     }
+  }
+
+  componentDidCatch(error, info) {
+    console.log('componentDidCatch');
+    console.log(error);
+    console.log(info);
+    return this.setGoogleError(error);
   }
 
   handleFilterTextChange = e => {
@@ -231,12 +232,15 @@ class App extends Component {
       markerRefsArr,
       filterMarkers, // Array
       filterText, // String
-      fourSquareError
+      fourSquareError,
+      googleError
     } = this.state;
     const markersToShow = !filterText ? markerInfoArr : filterMarkers;
 
     return fourSquareError ? (
       <h1>FourSquare Error, apologies for any inconvenience!</h1>
+    ) : googleError ? (
+      <h1>Google Error, apologies for the inconvenience!</h1>
     ) : (
       <React.Fragment>
         <Attribution text={'Venue data powered by Foursquare'} />
