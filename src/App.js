@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { GoogleApiWrapper } from 'google-maps-react';
+import ErrorBoundary from './components/ErrorBoundary';
 import GoogleMap from './components/GoogleMap';
 import Sidebar from './components/Sidebar';
 import HamburgerButton from './components/HamburgerButton';
