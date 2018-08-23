@@ -3,7 +3,7 @@ import React from 'react';
 export default function ListView({ markersToShow, handleListItemClick }) {
   
   return (
-    <ul className="list-locations" onClick={handleListItemClick}>
+    <ul className='list-locations' role='menubar' onClick={handleListItemClick}>
       {markersToShow ? markersToShow.map(makeClickableItems) : null}
     </ul>
   );
@@ -12,9 +12,9 @@ export default function ListView({ markersToShow, handleListItemClick }) {
     const { name, address } = markerInfo;
 
     return (
-      <li data-location-number={idx} key={`listItem${idx}`}>
-        <h2 className="list-item name">{name}</h2>
-        <h3 className="list-item address">{address}</h3>
+      <li tabindex='0' data-location-number={idx} role='menuitem' key={`listItem${idx}`}>
+        <h2 className='list-item name'>{name}</h2>
+        <h3 className='list-item address'>{address}</h3>
       </li>
     );
   }

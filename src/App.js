@@ -10,11 +10,6 @@ import './App.css';
 
 /*
   - COMMENT ALL NECESSARY PARTS OF CODE
-  - SEE IF CHANGING ACTIVEMARKER TO NULL DEFAULT VALUE BREAKS APP
-  - FIX TAB FOCUS
-  - GOOGLE MAPS ERROR HANDLING
-  - STYLE BETTER
-  - 
 */
 
 class App extends Component {
@@ -26,6 +21,7 @@ class App extends Component {
     filterMarkers: [],
     hamburgerOpen: false,
     fourSquareError: null,
+    mapError: false,
     googleMapsRef: React.createRef() // ref to <GoogleMap/> component
   };
 
@@ -107,7 +103,6 @@ class App extends Component {
         this.closeInfoWindow(),
         this.resetActiveMarker()
       );
-      // console.log('infoWindowAlreadyOpen block', this.state);
     }
 
     try {
@@ -177,6 +172,8 @@ class App extends Component {
 
   setActiveMarker = activeMarker => this.setState({ activeMarker });
 
+  setMapError = mapError => this.setState({ mapError });
+
   resetActiveMarker = () => this.setActiveMarker(null);
 
   toggleHamburgerOpen = () =>
@@ -192,13 +189,14 @@ class App extends Component {
       markerInfoArr,
       filterMarkers, // Array
       filterText, // String
-      fourSquareError
+      fourSquareError,
+      mapError
     } = this.state;
     const markersToShow = !filterText ? markerInfoArr : filterMarkers;
 
     return fourSquareError ? (
       <h1>FourSquare Error, apologies for any inconvenience!</h1>
-    ) : (
+    ) : mapError ? <h1>Google Maps Error, apologies for any inconvenience!</h1> : (
       <React.Fragment>
         <Attribution text={'Venue data powered by Foursquare'} />
         <HamburgerButton
@@ -218,7 +216,7 @@ class App extends Component {
           activeMarker={activeMarker}
           markerInfoArr={markersToShow}
           showingInfoWindow={showingInfoWindow}
-          setMapLoaded={this.setMapLoaded}
+          setMapError={this.setMapError}
           onMapClicked={this.onMapClicked}
           onMarkerClick={this.onMarkerClick}
           onInfoWindowClose={this.onInfoWindowClose}
@@ -235,7 +233,7 @@ class App extends Component {
 //   apiKey: 'AIzaSyBAxbjkY2XIFNOn1V6hVxUuKpsZoX9iE'
 // })(App);
 
-// right
+// correct
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyBAxbjkY2XIFNOn1V6hVxUuKpsZoX9i28E'
 })(App);

@@ -10,7 +10,7 @@ export default function Sidebar({
   handleListItemClick
 }) {
   return (
-    <div className={open ? 'sidebar open' : 'sidebar'}>
+    <div className={open ? 'sidebar open' : 'sidebar'} aria-hidden={!open}>
       <TextFilter value={filterText} onFilter={handleFilterTextChange} />
 
       <ListView

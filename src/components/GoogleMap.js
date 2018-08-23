@@ -11,6 +11,30 @@ class GoogleMap extends Component {
       mapRef: React.createRef()
     };
   }
+  
+  componentDidMount() {
+    const {
+      mapRef: {
+        current: {
+          refs: {
+            map: { firstChild: container }
+          }
+        }
+      }
+    } = this.state;
+    const { setMapError } = this.props;
+    const appContainer = this.state.mapRef.current.refs.map.parentNode;
+    
+    appContainer.setAttribute('role', 'application');
+    appContainer.setAttribute('tabindex', '-1');
+    
+    window.setTimeout(() => {
+      console.log('container.firstChild is', container.firstChild);
+      if (container.firstChild.classList.contains('gm-err-container')) {
+        setMapError(true);
+      }
+    }, 2000);
+  }
 
   // returns Boolean
   sameVenueNames(arr1, arr2) {
@@ -68,12 +92,14 @@ class GoogleMap extends Component {
     return (
       <Map
         ref={this.state.mapRef}
+        onReady={this.handleReady}
         google={google}
         zoom={zoom}
         onClick={onMapClicked}
         initialCenter={center}
         style={style}
-        className={'map-container'}
+        className='map-container'
+        role='application'
       >
         {markersArr}
         <InfoWindow
