@@ -28,10 +28,7 @@ class App extends Component {
   componentDidMount() {
     fourSquareApiCall(FOURSQUARE, DEFAULT_CENTER)
       .then(res => {
-        if (res.meta.code !== 200) {
-          console.log('res.meta.code status was not 200', res);
-          return this.setFourSquareError(res);
-        }
+        if (res.meta.code !== 200) return this.setFourSquareError(res);
 
         const {
           response: { venues } // Array
@@ -72,7 +69,6 @@ class App extends Component {
     const previousActiveMarker = !!activeMarker;
 
     if (previousActiveMarker) {
-      console.log('previousActiveMarker', activeMarker);
       const sameMarker = activeMarker.address === selectedMarker.address;
 
       this.closeInfoWindow();
@@ -196,7 +192,9 @@ class App extends Component {
 
     return fourSquareError ? (
       <h1>FourSquare Error, apologies for any inconvenience!</h1>
-    ) : mapError ? <h1>Google Maps Error, apologies for any inconvenience!</h1> : (
+    ) : mapError ? (
+      <h1>Google Maps Error, apologies for any inconvenience!</h1>
+    ) : (
       <React.Fragment>
         <Attribution text={'Venue data powered by Foursquare'} />
         <HamburgerButton

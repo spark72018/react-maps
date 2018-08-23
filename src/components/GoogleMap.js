@@ -53,8 +53,8 @@ class GoogleMap extends Component {
     if (arrayLengthsDifferent || venueNamesDifferent) {
       /*
       - create an array of refs for each marker element in currentMarkers
-      - used 'await' because sometimes the next setState on line 48
-        would finish before the setState on line 41 would finish
+      - used 'await' because sometimes the next setState on line 59
+        would finish before the setState on line 66 would finish
       */
       await this.setState({
         markerRefsArr: currentMarkers.map(obj => React.createRef())
