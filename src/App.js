@@ -5,7 +5,7 @@ import Sidebar from './components/Sidebar';
 import HamburgerButton from './components/HamburgerButton';
 import Attribution from './components/Attribution';
 import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
-import { fourSquareApiCall, makeMarker } from './utilityFns';
+import { fourSquareVenueSearch, makeMarker } from './utilityFns';
 import './App.css';
 
 /*
@@ -26,13 +26,17 @@ class App extends Component {
   };
 
   componentDidMount() {
-    fourSquareApiCall(FOURSQUARE, DEFAULT_CENTER)
+    fourSquareVenueSearch(FOURSQUARE, DEFAULT_CENTER)
       .then(res => {
         if (res.meta.code !== 200) return this.setFourSquareError(res);
 
         const {
           response: { venues } // Array
         } = res;
+
+        console.log('venues are', venues);
+
+        // fetch();
 
         return this.setMarkerInfoArr(venues.map(makeMarker));
       })

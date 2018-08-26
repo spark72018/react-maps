@@ -29,7 +29,6 @@ class GoogleMap extends Component {
     appContainer.setAttribute('tabindex', '-1');
     
     window.setTimeout(() => {
-      console.log('container.firstChild is', container.firstChild);
       if (container.firstChild.classList.contains('gm-err-container')) {
         setMapError(true);
       }
