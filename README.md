@@ -7,7 +7,7 @@ Final project for Udacity's Front-End Nanodegree utilizing API's from Google Map
 - Search bar to filter locations
 - Info window popup on marker and list item click
 - Marker animation when active
-- Responsive, mobile-first design
+- Responsive design
 
 To install dependencies:
 ```
