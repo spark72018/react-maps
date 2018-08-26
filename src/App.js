@@ -86,6 +86,22 @@ class App extends Component {
     );
   };
 
+  getChosenMarker = htmlElement => {
+    const tagWithDatasetAttr = htmlElement.parentNode;
+    const { locationNumber } = tagWithDatasetAttr.dataset;
+    const parsedLocationNum = parseInt(locationNumber, 10);
+    const googleMapRef = this.state.googleMapsRef.current;
+    const { markerRefsArr } = googleMapRef.state;
+
+    return findMarker(parsedLocationNum, markerRefsArr);
+
+    // used to find object created from google.maps.Marker constructor
+    // from array in <GoogleMaps/> components
+    function findMarker(datasetNum, arrayOfMarkers) {
+      return arrayOfMarkers[datasetNum].current.marker;
+    }
+  };
+
   handleListItemClick = e => {
     const { target } = e;
     const notListItem = !target.classList.contains('list-item');
@@ -102,21 +118,7 @@ class App extends Component {
     }
 
     try {
-      const tagWithDatasetAttr = target.parentNode;
-      const {
-        dataset: { locationNumber }
-      } = tagWithDatasetAttr;
-      const parsedLocationNum = parseInt(locationNumber, 10);
-      const {
-        googleMapsRef: { current: googleMapComponent }
-      } = this.state;
-
-      const markersFromGoogleMapComponent =
-        googleMapComponent.state.markerRefsArr;
-      const chosenMarker = findMarker(
-        parsedLocationNum,
-        markersFromGoogleMapComponent
-      );
+      const chosenMarker = this.getChosenMarker(target);
 
       return (
         this.setActiveMarker(chosenMarker),
@@ -125,12 +127,6 @@ class App extends Component {
       );
     } catch (e) {
       console.log('handleListItemClick method error!', e);
-    }
-
-    // used to find object created from google.maps.Marker constructor
-    // from array in <GoogleMaps/> components
-    function findMarker(datasetNum, arrayOfMarkers) {
-      return arrayOfMarkers[datasetNum].current.marker;
     }
   };
 
