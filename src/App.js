@@ -84,6 +84,33 @@ class App extends Component {
     return this.bounceMarkerAndShowInfoWindow(selectedMarker);
   };
 
+  handleListItemClick = e => {
+    const { target } = e;
+    const notListItem = !target.classList.contains('list-item');
+    if (notListItem) return;
+
+    try {
+      const { activeMarker, showingInfoWindow } = this.state;
+      const tagWithDatasetAttr = target.parentNode;
+      const chosenMarker = this.getChosenMarker(tagWithDatasetAttr);
+      if (showingInfoWindow) {
+        const sameMarker = activeMarker.address === chosenMarker.address;
+        
+        this.closeInfoWindow(),
+        this.resetActiveMarker();
+
+        if (!sameMarker) {
+          this.stopMarkerAnimation(activeMarker);
+        }
+      }
+
+      return this.bounceMarkerAndShowInfoWindow(chosenMarker);
+    } catch (e) {
+      console.log('handleListItemClick method error!', e);
+    }
+  };
+  
+  // returns marker obj
   getChosenMarker = tagWithDatasetAttr => {
     const { locationNumber } = tagWithDatasetAttr.dataset;
     const index = parseInt(locationNumber, 10);
@@ -106,31 +133,6 @@ class App extends Component {
       this.makeMarkerBounce(marker),
       this.showInfoWindow()
     );
-  };
-
-  handleListItemClick = e => {
-    const { target } = e;
-    const notListItem = !target.classList.contains('list-item');
-    if (notListItem) return;
-
-    const { activeMarker, showingInfoWindow } = this.state;
-
-    if (showingInfoWindow) {
-      return (
-        this.stopMarkerAnimation(activeMarker),
-        this.closeInfoWindow(),
-        this.resetActiveMarker()
-      );
-    }
-
-    try {
-      const tagWithDatasetAttr = target.parentNode;
-      const chosenMarker = this.getChosenMarker(tagWithDatasetAttr);
-
-      return this.bounceMarkerAndShowInfoWindow(chosenMarker);
-    } catch (e) {
-      console.log('handleListItemClick method error!', e);
-    }
   };
 
   onMapClicked = props => {
