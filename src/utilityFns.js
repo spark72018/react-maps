@@ -11,7 +11,7 @@ export function fourSquareVenueSearch(fourSquareObj, centerObj) {
   const { CLIENT_ID, CLIENT_SECRET } = fourSquareObj;
   const { lat, lng } = centerObj;
 
-  const firstPartOfApiUrl = 'https://api.foursquare.com/v2/venues/search?';
+  const mainUrl = 'https://api.foursquare.com/v2/venues/search?';
   const clientIdString = 'client_id=' + CLIENT_ID;
   const clientSecretString = '&client_secret=' + CLIENT_SECRET;
   const coordinateString = '&ll=' + lat + ',' + lng;
@@ -20,31 +20,7 @@ export function fourSquareVenueSearch(fourSquareObj, centerObj) {
   const limitString = '&limit=7';
 
   const foursquareUrl =
-    firstPartOfApiUrl +
-    clientIdString +
-    clientSecretString +
-    coordinateString +
-    queryString +
-    versioningString +
-    limitString;
-
-  return fetch(foursquareUrl).then(res => res.json());
-}
-
-export function fourSquareApiCall(fourSquareObj, centerObj) {
-  const { CLIENT_ID, CLIENT_SECRET } = fourSquareObj;
-  const { lat, lng } = centerObj;
-
-  const firstPartOfApiUrl = 'https://api.foursquare.com/v2/venues/search?';
-  const clientIdString = 'client_id=' + CLIENT_ID;
-  const clientSecretString = '&client_secret=' + CLIENT_SECRET;
-  const coordinateString = '&ll=' + lat + ',' + lng;
-  const queryString = '&query=coffee';
-  const versioningString = '&v=20180723';
-  const limitString = '&limit=7';
-
-  const foursquareUrl =
-    firstPartOfApiUrl +
+    mainUrl +
     clientIdString +
     clientSecretString +
     coordinateString +

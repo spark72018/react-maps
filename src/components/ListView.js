@@ -12,7 +12,7 @@ export default function ListView({ markersToShow, handleListItemClick }) {
     const { name, address } = markerInfo;
 
     return (
-      <li tabindex='0' data-location-number={idx} role='menuitem' key={`listItem${idx}`}>
+      <li tabIndex='0' data-location-number={idx} role='menuitem' key={`listItem${idx}`}>
         <h2 className='list-item name'>{name}</h2>
         <h3 className='list-item address'>{address}</h3>
       </li>

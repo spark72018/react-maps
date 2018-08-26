@@ -13,3 +13,7 @@ export const MAP_STYLE = {
   height: '100%',
   position: 'relative'
 };
+
+export const DEFAULT_ZOOM = 13;
+
+export const GOOGLE_API_KEY = 'AIzaSyBAxbjkY2XIFNOn1V6hVxUuKpsZoX9i28E';

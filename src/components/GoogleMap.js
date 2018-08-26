@@ -13,21 +13,15 @@ class GoogleMap extends Component {
   }
   
   componentDidMount() {
-    const {
-      mapRef: {
-        current: {
-          refs: {
-            map: { firstChild: container }
-          }
-        }
-      }
-    } = this.state;
     const { setMapError } = this.props;
+    // get <div/> that contains all of Google map
     const appContainer = this.state.mapRef.current.refs.map.parentNode;
     
     appContainer.setAttribute('role', 'application');
     appContainer.setAttribute('tabindex', '-1');
     
+    // get <div/> that will contain an error css class if map doesn't load propertly
+    const container = this.state.mapRef.current.refs.map.firstChild;
     window.setTimeout(() => {
       if (container.firstChild.classList.contains('gm-err-container')) {
         setMapError(true);
@@ -49,6 +43,8 @@ class GoogleMap extends Component {
       currentMarkers,
       previousMarkers
     );
+    // create new markerRefsArr and markersArr if venue data in props
+    // have changed
     if (arrayLengthsDifferent || venueNamesDifferent) {
       /*
       - create an array of refs for each marker element in currentMarkers
@@ -91,14 +87,12 @@ class GoogleMap extends Component {
     return (
       <Map
         ref={this.state.mapRef}
-        onReady={this.handleReady}
         google={google}
         zoom={zoom}
         onClick={onMapClicked}
         initialCenter={center}
         style={style}
         className='map-container'
-        role='application'
       >
         {markersArr}
         <InfoWindow

@@ -4,13 +4,15 @@ import GoogleMap from './components/GoogleMap';
 import Sidebar from './components/Sidebar';
 import HamburgerButton from './components/HamburgerButton';
 import Attribution from './components/Attribution';
-import { FOURSQUARE, DEFAULT_CENTER, MAP_STYLE } from './constants';
+import {
+  FOURSQUARE,
+  DEFAULT_CENTER,
+  MAP_STYLE,
+  DEFAULT_ZOOM,
+  GOOGLE_API_KEY
+} from './constants';
 import { fourSquareVenueSearch, makeMarker } from './utilityFns';
 import './App.css';
-
-/*
-  - COMMENT ALL NECESSARY PARTS OF CODE
-*/
 
 class App extends Component {
   state = {
@@ -25,18 +27,13 @@ class App extends Component {
     googleMapsRef: React.createRef() // ref to <GoogleMap/> component
   };
 
+  // get FourSquare data and save to state
   componentDidMount() {
     fourSquareVenueSearch(FOURSQUARE, DEFAULT_CENTER)
       .then(res => {
         if (res.meta.code !== 200) return this.setFourSquareError(res);
 
-        const {
-          response: { venues } // Array
-        } = res;
-
-        console.log('venues are', venues);
-
-        // fetch();
+        const { venues } = res.response;
 
         return this.setMarkerInfoArr(venues.map(makeMarker));
       })
@@ -49,6 +46,8 @@ class App extends Component {
   handleFilterTextChange = e => {
     const filterText = e.target.value;
     const { markerInfoArr } = this.state;
+    // filterLocation is a function that takes an object as an argument
+    // and returns Boolean if filterText is a substring of venue name
     const filterLocation = this.locationFilter(filterText);
 
     const filterMarkers = filterText
@@ -67,7 +66,6 @@ class App extends Component {
     return name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1;
   };
 
-  // clicking markers after the first marker creates bugs with animation
   onMarkerClick = (props, selectedMarker, e) => {
     const { activeMarker } = this.state;
     const previousActiveMarker = !!activeMarker;
@@ -77,33 +75,37 @@ class App extends Component {
 
       this.closeInfoWindow();
       this.resetActiveMarker();
-
+      // only stop animation if selectedMarker is different from previous activeMarker
       if (!sameMarker) {
         this.stopMarkerAnimation(activeMarker);
       }
     }
 
-    return (
-      this.makeMarkerBounce(selectedMarker),
-      this.setActiveMarker(selectedMarker),
-      this.showInfoWindow()
-    );
+    return this.bounceMarkerAndShowInfoWindow(selectedMarker);
   };
 
-  getChosenMarker = htmlElement => {
-    const tagWithDatasetAttr = htmlElement.parentNode;
+  getChosenMarker = tagWithDatasetAttr => {
     const { locationNumber } = tagWithDatasetAttr.dataset;
-    const parsedLocationNum = parseInt(locationNumber, 10);
+    const index = parseInt(locationNumber, 10);
     const googleMapRef = this.state.googleMapsRef.current;
+    // access array of <Marker/>'s from within <GoogleMap/> component state
     const { markerRefsArr } = googleMapRef.state;
 
-    return findMarker(parsedLocationNum, markerRefsArr);
+    return findMarker(index, markerRefsArr);
 
     // used to find object created from google.maps.Marker constructor
     // from array in <GoogleMaps/> components
     function findMarker(datasetNum, arrayOfMarkers) {
       return arrayOfMarkers[datasetNum].current.marker;
     }
+  };
+
+  bounceMarkerAndShowInfoWindow = marker => {
+    return (
+      this.setActiveMarker(marker),
+      this.makeMarkerBounce(marker),
+      this.showInfoWindow()
+    );
   };
 
   handleListItemClick = e => {
@@ -122,13 +124,10 @@ class App extends Component {
     }
 
     try {
-      const chosenMarker = this.getChosenMarker(target);
+      const tagWithDatasetAttr = target.parentNode;
+      const chosenMarker = this.getChosenMarker(tagWithDatasetAttr);
 
-      return (
-        this.setActiveMarker(chosenMarker),
-        this.makeMarkerBounce(chosenMarker),
-        this.showInfoWindow()
-      );
+      return this.bounceMarkerAndShowInfoWindow(chosenMarker);
     } catch (e) {
       console.log('handleListItemClick method error!', e);
     }
@@ -219,7 +218,7 @@ class App extends Component {
           onMarkerClick={this.onMarkerClick}
           onInfoWindowClose={this.onInfoWindowClose}
           center={DEFAULT_CENTER}
-          zoom={13}
+          zoom={DEFAULT_ZOOM}
           style={MAP_STYLE}
         />
       </React.Fragment>
@@ -227,11 +226,6 @@ class App extends Component {
   }
 }
 
-// export default GoogleApiWrapper({
-//   apiKey: 'AIzaSyBAxbjkY2XIFNOn1V6hVxUuKpsZoX9iE'
-// })(App);
-
-// correct
 export default GoogleApiWrapper({
-  apiKey: 'AIzaSyBAxbjkY2XIFNOn1V6hVxUuKpsZoX9i28E'
+  apiKey: GOOGLE_API_KEY
 })(App);
