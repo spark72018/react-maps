@@ -66,50 +66,51 @@ class App extends Component {
     return name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1;
   };
 
-  onMarkerClick = (props, selectedMarker, e) => {
-    const { activeMarker } = this.state;
-    const previousActiveMarker = !!activeMarker;
+  // closes InfoWindow, resets activeMarker, and if selectedMarker is different
+  // from previousMarker, stops animation of previousMarker
+  handlePreviousInfoWindow = (previousMarker, selectedMarker) => {
+    const sameMarker = previousMarker.address === selectedMarker.address;
 
-    if (previousActiveMarker) {
-      const sameMarker = activeMarker.address === selectedMarker.address;
-
-      this.closeInfoWindow();
-      this.resetActiveMarker();
-      // only stop animation if selectedMarker is different from previous activeMarker
-      if (!sameMarker) {
-        this.stopMarkerAnimation(activeMarker);
-      }
+    this.closeInfoWindow();
+    this.resetActiveMarker();
+    // only stop animation if selectedMarker is different from previous activeMarker
+    if (!sameMarker) {
+      this.stopMarkerAnimation(previousMarker);
     }
+  };
 
-    return this.bounceMarkerAndShowInfoWindow(selectedMarker);
+  onMarkerClick = (props, chosenMarker, e) => {
+    try {
+      const { activeMarker, showingInfoWindow } = this.state;
+
+      showingInfoWindow &&
+        this.handlePreviousInfoWindow(activeMarker, chosenMarker);
+
+      return this.bounceMarkerAndShowInfoWindow(chosenMarker);
+    } catch (e) {
+      console.log('onMarkerClick error!', e);
+    }
   };
 
   handleListItemClick = e => {
-    const { target } = e;
-    const notListItem = !target.classList.contains('list-item');
-    if (notListItem) return;
-
     try {
-      const { activeMarker, showingInfoWindow } = this.state;
+      const { target } = e;
+      const notListItem = !target.classList.contains('list-item');
+      if (notListItem) return;
+  
       const tagWithDatasetAttr = target.parentNode;
       const chosenMarker = this.getChosenMarker(tagWithDatasetAttr);
-      if (showingInfoWindow) {
-        const sameMarker = activeMarker.address === chosenMarker.address;
-        
-        this.closeInfoWindow(),
-        this.resetActiveMarker();
+      const { activeMarker, showingInfoWindow } = this.state;
 
-        if (!sameMarker) {
-          this.stopMarkerAnimation(activeMarker);
-        }
-      }
+      showingInfoWindow &&
+        this.handlePreviousInfoWindow(activeMarker, chosenMarker);
 
       return this.bounceMarkerAndShowInfoWindow(chosenMarker);
     } catch (e) {
       console.log('handleListItemClick method error!', e);
     }
   };
-  
+
   // returns marker obj
   getChosenMarker = tagWithDatasetAttr => {
     const { locationNumber } = tagWithDatasetAttr.dataset;
